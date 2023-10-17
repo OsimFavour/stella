@@ -46,6 +46,12 @@ class Listing(models.Model):
     # The most common identifier is the 4326 which lets us 
     # represent spatial data using latitude and longitude
     location =  models.PointField(blank=True, null=True, srid=4326)
+    picture1 = models.ImageField(blank=True, null=True, upload_to='pictures/%Y/%m/%d')
+    picture2 = models.ImageField(blank=True, null=True, upload_to='pictures/%Y/%m/%d')
+    picture3 = models.ImageField(blank=True, null=True, upload_to='pictures/%Y/%m/%d')
+    picture4 = models.ImageField(blank=True, null=True, upload_to='pictures/%Y/%m/%d')
+    picture5 = models.ImageField(blank=True, null=True, upload_to='pictures/%Y/%m/%d')
+
 
     def __str__(self):
         return self.title

@@ -1,11 +1,16 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 // MUI Imports
 import { Button, Typography, Grid, AppBar, Toolbar, IconButton } from '@mui/material'
 
+// Contexts
+import StateContext from '../Contexts/StateContext'
+
 function Header() {
     const navigate = useNavigate()
+    const GlobalState = useContext(StateContext)
+
     return (
     <AppBar position="static" sx={{backgroundColor:'black'}}>
         <Toolbar>
@@ -37,7 +42,20 @@ function Header() {
                     },
                     }}>
                     Add Property</Button>
-                <Button sx={{
+                    
+                {GlobalState.userUsername !== '' ? <Button sx={{
+                    backgroundColor: 'white',
+                    color: 'black',
+                    width: '15rem',
+                    fontSize: '1.1rem',
+                    marginLeft: '1rem',
+                    '&:hover': {
+                        backgroundColor: 'green'
+                    },
+                    }}
+                    // onClick={() => navigate("/login")}
+                    >
+                    {GlobalState.userUsername}</Button> : <Button sx={{
                     backgroundColor: 'white',
                     color: 'black',
                     width: '15rem',
@@ -48,7 +66,8 @@ function Header() {
                     },
                     }}
                     onClick={() => navigate("/login")}>
-                    Login</Button>
+                    Login</Button>}
+                
             </div>
             
         </Toolbar>

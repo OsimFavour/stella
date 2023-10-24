@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useImmerReducer } from 'use-immer'
+import Axios from 'axios'
 
 // MUI
 import { 
@@ -16,14 +17,22 @@ import {
     TextField
 } from '@mui/material'
 
+// Contexts
+import DispatchContext from '../Contexts/DispatchContext'
+import StateContext from '../Contexts/StateContext'
+
 
 function Login() {
   const navigate = useNavigate()
 
+  const GlobalDispatch = useContext(DispatchContext)
+  const GlobalState = useContext(StateContext)
+
   const initialState = {
     usernameValue: '',
     passwordValue: '',
-    sendRequest: 0
+    sendRequest: 0,
+    token: ''
     }
 
     function ReducerFunction(draft, action) {
@@ -34,9 +43,12 @@ function Login() {
             case 'catchPasswordChange':
                 draft.passwordValue = action.passwordChosen
                 break
-            // case 'changeSendRequest':
-            //     draft.sendRequest = draft.sendRequest + 1
-            //     break
+            case 'changeSendRequest':
+                draft.sendRequest = draft.sendRequest + 1
+                break
+            case 'catchToken':
+                draft.token = action.tokenValue
+                break
         }
     }
 
@@ -47,7 +59,7 @@ function Login() {
     function formSubmit(e) {
         e.preventDefault()
         console.log('The form has been submitted')
-        // dispatch({type: 'changeSendRequest'})
+        dispatch({type: 'changeSendRequest'})
     }
 
 
@@ -63,7 +75,16 @@ function Login() {
                     }, 
                     { cancelToken: source.token })
                     console.log(response)
-                    navigate('/')
+
+                    dispatch({
+						type: "catchToken",
+						tokenValue: response.data.auth_token,
+					})
+                    GlobalDispatch({
+						type: "catchToken",
+						tokenValue: response.data.auth_token,
+					})
+                    // navigate('/')
                 }
                 catch (error) {
                     console.log(error.response)
@@ -73,6 +94,36 @@ function Login() {
             return () => {source.cancel()}
             }
     }, [state.sendRequest])
+
+    // Get User Info
+    useEffect(() => {
+        if (state.token !== '') {
+            const source = Axios.CancelToken.source()
+            async function GetUserInfo() {
+                try {
+                    let url = 'http://localhost:8000/api-auth-djoser/users/me'
+                    const response = await Axios.get(url, {
+                        headers: { Authorization : 'Token '.concat(state.token) }
+                    }, 
+                    { cancelToken: source.token })
+                    console.log(response)
+                    // dispatch({type: 'catchToken', tokenValue: response.data.auth_token})
+                    GlobalDispatch({
+                        type: 'catchUserInfo', 
+                        usernameInfo: response.data.username,
+                        emailInfo: response.data.email,
+                        IdInfo: response.data.id
+                    })
+                    navigate('/')
+                }
+                catch (error) {
+                    console.log(error.response)
+                }
+            }
+            GetUserInfo()
+            return () => {source.cancel()}
+            }
+    }, [state.token])
 
     return (
     <div style={{ 
@@ -85,20 +136,51 @@ function Login() {
                 <Typography variant='h4'>Sign In Here</Typography>
             </Grid>
             <Grid item container sx={{ marginTop: '1rem' }}>
-                <TextField id="username" label="Username" variant="outlined" fullWidth/>
+                <TextField 
+                    id="username" 
+                    label="Username" 
+                    variant="outlined" 
+                    fullWidth
+                    value={state.usernameValue}
+                    onChange={(e) => 
+                        dispatch({
+                            type: 'catchUsernameChange', 
+                            usernameChosen: e.target.value
+                            })}
+                />
             </Grid>
             <Grid item container sx={{ marginTop: '1rem' }}>
-                <TextField id="password" label="Password" variant="outlined" type='password' fullWidth/>
+                <TextField 
+                    id="password" 
+                    label="Password" 
+                    variant="outlined" 
+                    type='password' 
+                    fullWidth
+                    value={state.passwordValue}
+                    onChange={(e) => 
+                        dispatch({
+                            type: 'catchPasswordChange', 
+                            passwordChosen: e.target.value
+                            })}/>
             </Grid>
             <Grid item container xs={8} sx={{ 
                 marginTop: '1rem',
                 marginLeft: 'auto',
                 marginRight: 'auto',
                 fontSize: '1.1rem' }}>
-                <Button variant='contained' type='submit' fullWidth>Sign In</Button>
+                <Button 
+                    variant='contained' 
+                    type='submit' 
+                    fullWidth
+                >Sign In</Button>
             </Grid>
        
         </form>
+        {/* This sent a message to the frontend */}
+        {/* {GlobalState.globalMessage} */}
+
+        {/* {GlobalState.userToken} */}
+        
 
         <Grid item container justifyContent='center' sx={{ marginTop: '1rem' }}>
                 <Typography variant='small'>Don't Have An Accout? {' '}

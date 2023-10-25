@@ -95,6 +95,7 @@ function Login() {
             }
     }, [state.sendRequest])
 
+
     // Get User Info
     useEffect(() => {
         if (state.token !== '') {
@@ -109,7 +110,7 @@ function Login() {
                     console.log(response)
                     // dispatch({type: 'catchToken', tokenValue: response.data.auth_token})
                     GlobalDispatch({
-                        type: 'catchUserInfo', 
+                        type: 'userSignsIn', 
                         usernameInfo: response.data.username,
                         emailInfo: response.data.email,
                         IdInfo: response.data.id

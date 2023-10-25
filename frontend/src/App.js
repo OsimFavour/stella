@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './App.css'
 import { useImmerReducer } from 'use-immer'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
@@ -25,10 +25,11 @@ import StateContext from './Contexts/StateContext'
 function App() {
 
   const initialState = {
-    userUsername: '',
-    userEmail: '',
-    userId: '',
-    userToken: '',
+    userUsername: localStorage.getItem('theUserUsername'),
+    userEmail: localStorage.getItem('theUserEmail'),
+    userId: localStorage.getItem('theUserId'),
+    userToken: localStorage.getItem('theUserToken'),
+    userIsLogged: localStorage.getItem('theUserUsername') ? true : false,
     globalMessage: 'Hello, this message can be used by any child component'
   }
 
@@ -37,17 +38,39 @@ function App() {
         case 'catchToken':
           draft.userToken = action.tokenValue
           break
-        case 'catchUserInfo':
-          draft.userUsername = action.usernameInfo,
-          draft.userEmail = action.emailInfo,
+        case 'userSignsIn':
+          draft.userUsername = action.usernameInfo
+          draft.userEmail = action.emailInfo
           draft.userId = action.IdInfo
+          draft.userIsLogged = true
           break
+        case 'logout':
+          draft.userIsLogged = false
       }
     }
 
     // const [state, dispatch] = useReducer(ReducerFunction, initialState)
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
 
+    // Login User
+
+    useEffect(() => {
+      if (state.userIsLogged) {
+        // if user is logged in. Store user in local storage
+        localStorage.setItem('theUserUsername', state.userUsername)
+        localStorage.setItem('theUserEmail', state.userEmail)
+        localStorage.setItem('theUserId', state.userId)
+        localStorage.setItem('theUserToken', state.userToken)
+      }
+
+      else {
+        // user is logged out.
+        localStorage.removeItem('theUserUsername')
+        localStorage.removeItem('theUserEmail')
+        localStorage.removeItem('theUserId')
+        localStorage.removeItem('theUserToken')
+      }
+    }, [state.userIsLogged])
 
   return (
     <StateContext.Provider value={state}>

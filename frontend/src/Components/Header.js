@@ -1,15 +1,48 @@
+import Axios from 'axios'
 import React, {useContext} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 // MUI Imports
-import { Button, Typography, Grid, AppBar, Toolbar, IconButton } from '@mui/material'
+import { Button, Typography, Grid, AppBar, Toolbar, IconButton, Menu, MenuItem } from '@mui/material'
 
 // Contexts
 import StateContext from '../Contexts/StateContext'
+import DispatchContext from '../Contexts/DispatchContext'
 
 function Header() {
     const navigate = useNavigate()
     const GlobalState = useContext(StateContext)
+    const GlobalDispatch = useContext(DispatchContext)
+
+    // Menu
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    }
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
+    
+    const handleLogout = async () => {
+        setAnchorEl(null)
+        try {
+            let url = 'http://localhost:8000/api-auth-djoser/token/logout'
+            const response = await Axios.post(
+                url,
+                GlobalState.userToken,
+                { headers: { Authorization : 'Token '.concat(GlobalState.userToken) } }
+            )
+            console.log(response)
+            GlobalDispatch({type: 'logout'})
+            navigate('/')
+        }
+        catch(e) {
+
+            console.log(e.response)
+        }
+
+    }
 
     return (
     <AppBar position="static" sx={{backgroundColor:'black'}}>
@@ -43,7 +76,7 @@ function Header() {
                     }}>
                     Add Property</Button>
                     
-                {GlobalState.userUsername !== '' ? <Button sx={{
+                {GlobalState.userIsLogged ? <Button sx={{
                     backgroundColor: 'white',
                     color: 'black',
                     width: '15rem',
@@ -53,6 +86,7 @@ function Header() {
                         backgroundColor: 'green'
                     },
                     }}
+                    onClick={handleClick}
                     // onClick={() => navigate("/login")}
                     >
                     {GlobalState.userUsername}</Button> : <Button sx={{
@@ -67,6 +101,21 @@ function Header() {
                     }}
                     onClick={() => navigate("/login")}>
                     Login</Button>}
+
+
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                        }}
+                    >
+                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem onClick={handleClose}>My account</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </Menu>
                 
             </div>
             

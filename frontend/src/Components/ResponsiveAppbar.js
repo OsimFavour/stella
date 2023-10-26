@@ -1,41 +1,84 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
+import React, {useContext} from 'react'
+import Axios from 'axios'
+// import AppBar from '@mui/material/AppBar'
+// import Box from '@mui/material/Box'
+// import Toolbar from '@mui/material/Toolbar'
+// import IconButton from '@mui/material/IconButton'
+// import Typography from '@mui/material/Typography'
+// import Menu from '@mui/material/Menu'
+import MenuIcon from '@mui/icons-material/Menu'
+// import Container from '@mui/material/Container'
+// import Avatar from '@mui/material/Avatar'
+// import Button from '@mui/material/Button'
+// import Tooltip from '@mui/material/Tooltip'
+// import MenuItem from '@mui/material/MenuItem'
+import AdbIcon from '@mui/icons-material/Adb'
 import { Link, useNavigate } from 'react-router-dom'
 
-const pages = ['Listings', 'Agencies', 'Add Property', 'Login'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+import StateContext from '../Contexts/StateContext'
+import DispatchContext from '../Contexts/DispatchContext'
+
+import { 
+  AppBar, 
+  Box, 
+  Toolbar, 
+  IconButton, 
+  Typography, 
+  Menu, 
+  Container, 
+  Avatar, 
+  Button, 
+  Tooltip, 
+  MenuItem 
+} from '@mui/material'
+
+const pages = ['Listings', 'Agencies', 'AddProperty', 'Login']
+const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
 function ResponsiveAppBar() {
   const navigate = useNavigate()
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const GlobalState = useContext(StateContext)
+  const GlobalDispatch = useContext(DispatchContext)
+
+  const [anchorElNav, setAnchorElNav] = React.useState(null)
+  const [anchorElUser, setAnchorElUser] = React.useState(null)
 
   const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
+    setAnchorElNav(event.currentTarget)
+  }
   const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
+    setAnchorElUser(event.currentTarget)
+  }
 
   const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+    setAnchorElNav(null)
+  }
 
   const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+    setAnchorElUser(null)
+  }
+
+  const handleLogout = async () => {
+    setAnchorElNav(null)
+    const confirmLogout = window.confirm('Are you sure you want to leave?')
+    if (confirmLogout) {
+        try {
+            let url = 'http://localhost:8000/api-auth-djoser/token/logout'
+            const response = await Axios.post(
+                url,
+                GlobalState.userToken,
+                { headers: { Authorization : 'Token '.concat(GlobalState.userToken) } }
+            )
+            console.log(response)
+            GlobalDispatch({type: 'logout'})
+            navigate('/')
+        }
+        catch(e) {
+
+            console.log(e.response)
+        }
+    }
+  }
   
 
   return (
@@ -90,12 +133,31 @@ function ResponsiveAppBar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
+
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  {/* <Typography textAlign="center">{page}</Typography> */}
-                  <Typography textAlign="center"><Button key={page} variant="text" onClick={() => navigate(`/${page}`)}>{page}</Button></Typography>
+                  <Typography textAlign="center">
+                    {page === 'Login' && GlobalState.userIsLogged ? (
+                      // Render the user's username when the user is logged in and the page is "Login"
+                      <Button key={page} onClick={() => navigate(`/${GlobalState.userUsername}`)}>
+                        {GlobalState.userUsername}
+                      </Button>
+                    ) : (
+                      // Render other pages normally
+                      <Button key={page} onClick={() => navigate(`/${page}`)}>
+                        {page}
+                      </Button>
+                    )}
+                  </Typography>
                 </MenuItem>
               ))}
+
+              {/* {pages.map((page) => (
+                <MenuItem key={page} onClick={handleCloseNavMenu}> */}
+                  {/* <Typography textAlign="center">{page}</Typography> */}
+                  {/* <Typography textAlign="center"><Button key={page} onClick={() => navigate(`/${page}`)}>{page}</Button></Typography> */}
+                {/* </MenuItem> */}
+              {/* ))} */}
             </Menu>
           </Box>
 
@@ -131,8 +193,8 @@ function ResponsiveAppBar() {
               <Button
                 key={page}
                 onClick={() => {
-                  handleCloseNavMenu();
-                  navigate(`/${page}`); 
+                  handleCloseNavMenu()
+                  navigate(`/${page}`) 
                 }}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
@@ -165,8 +227,8 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting} onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}>
+                  <Typography textAlign="center"><Button key={setting} onClick={() => navigate(`/${setting}`)}>{setting}</Button></Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -174,6 +236,6 @@ function ResponsiveAppBar() {
         </Toolbar>
       </Container>
     </AppBar>
-  );
+  )
 }
-export default ResponsiveAppBar;
+export default ResponsiveAppBar

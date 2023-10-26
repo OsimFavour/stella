@@ -200,13 +200,15 @@ function Listings() {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    <Polyline positions={polyOne} weight={10} color='green'/>
+                    
+                    {/* <Polyline positions={polyOne} weight={10} color='green'/>
                     <Polygon 
                         positions={polygonOne}
                         color='yellow'
                         fillColor='blue'
                         fillOpacity={0.9}
-                        opacity={0} />
+                        opacity={0} /> */}
+
                     {allListings.map((listing) => {
                         function IconDisplay() {
                             if (listing.listing_type === 'House') {
@@ -224,8 +226,8 @@ function Listings() {
                             key={listing.id}
                             icon={IconDisplay()}
                             position={[
-                                listing.location.coordinates[0],
-                                listing.location.coordinates[1]
+                                listing.latitude,
+                                listing.longitude
                             ]}>
                                 <Popup>
                                     <Typography variant='h5'>{listing.title}</Typography>

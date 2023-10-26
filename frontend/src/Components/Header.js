@@ -26,22 +26,24 @@ function Header() {
     
     const handleLogout = async () => {
         setAnchorEl(null)
-        try {
-            let url = 'http://localhost:8000/api-auth-djoser/token/logout'
-            const response = await Axios.post(
-                url,
-                GlobalState.userToken,
-                { headers: { Authorization : 'Token '.concat(GlobalState.userToken) } }
-            )
-            console.log(response)
-            GlobalDispatch({type: 'logout'})
-            navigate('/')
+        const confirmLogout = window.confirm('Are you sure you want to leave?')
+        if (confirmLogout) {
+            try {
+                let url = 'http://localhost:8000/api-auth-djoser/token/logout'
+                const response = await Axios.post(
+                    url,
+                    GlobalState.userToken,
+                    { headers: { Authorization : 'Token '.concat(GlobalState.userToken) } }
+                )
+                console.log(response)
+                GlobalDispatch({type: 'logout'})
+                navigate('/')
+            }
+            catch(e) {
+    
+                console.log(e.response)
+            }
         }
-        catch(e) {
-
-            console.log(e.response)
-        }
-
     }
 
     return (
@@ -73,7 +75,8 @@ function Header() {
                     '&:hover': {
                         backgroundColor: 'green'
                     },
-                    }}>
+                    }}
+                    onClick={() => navigate('/addproperty')}>
                     Add Property</Button>
                     
                 {GlobalState.userIsLogged ? <Button sx={{

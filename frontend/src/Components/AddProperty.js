@@ -14,8 +14,26 @@ import {
     CardMedia, 
     CardContent,
     CircularProgress,
-    TextField
+    TextField,
+	FormControlLabel,
+	Checkbox
 } from '@mui/material'
+
+
+const areaOptions = [
+	{
+	  value: '',
+	  label: '',
+	},
+	{
+	  value: 'Inner London',
+	  label: 'Inner London',
+	},
+	{
+	  value: 'Outer London',
+	  label: 'Outer London',
+	}
+]
 
 
 function AddProperty() {
@@ -144,7 +162,7 @@ function AddProperty() {
 
 	return (
 		<div style={{ 
-			width: '50%',
+			width: '75%',
 			marginLeft: 'auto',
 			marginRight: 'auto',
 			border: '5px solid white' }}>
@@ -195,37 +213,6 @@ function AddProperty() {
 					/>
 				</Grid>
 
-				<Grid item container sx={{ marginTop: '1rem' }}>
-					<TextField 
-						id="area" 
-						label="Area" 
-						variant="standard" 
-						fullWidth
-						value={state.areaValue}
-						onChange={(e) => 
-							dispatch({
-								type: 'catchAreaChange', 
-								areaChosen: e.target.value
-								})
-							}
-					/>
-				</Grid>
-
-				<Grid item container sx={{ marginTop: '1rem' }}>
-					<TextField 
-						id="borough" 
-						label="Borough" 
-						variant="standard" 
-						fullWidth
-						value={state.boroughValue}
-						onChange={(e) => 
-							dispatch({
-								type: 'catchBoroughChange', 
-								boroughChosen: e.target.value
-								})
-							}
-					/>
-				</Grid>
 
 				<Grid item container sx={{ marginTop: '1rem' }}>
 					<TextField 
@@ -268,11 +255,149 @@ function AddProperty() {
 						value={state.rentalFrequencyValue}
 						onChange={(e) => 
 							dispatch({
-								type: 'catchrentalFrequencyChange', 
+								type: 'catchRentalFrequencyChange', 
 								rentalFrequencyChosen: e.target.value
 								})
 							}
 					/>
+				</Grid>
+
+				<Grid item container sx={{ marginTop: '1rem' }}>
+					<TextField 
+						id="rooms" 
+						label="Rooms" 
+						variant="standard" 
+						fullWidth
+						value={state.roomsValue}
+						onChange={(e) => 
+							dispatch({
+								type: 'catchRoomsChange', 
+								roomsChosen: e.target.value
+								})
+							}
+					/>
+				</Grid>
+
+				<Grid item container sx={{ marginTop: '1rem' }}>
+					<FormControlLabel 
+						control={
+							<Checkbox checked={state.furnishedValue} 
+								onChange={(e) => 
+									dispatch({
+										type: 'catchFurnishedChange',
+										furnishedChosen: e.target.checked
+									})
+								} 
+							/>
+						} 
+						label="Furnished" 
+					/>
+				</Grid>
+
+
+				<Grid item container sx={{ marginTop: '1rem' }}>
+					<FormControlLabel 
+						control={
+							<Checkbox checked={state.poolValue} 
+								onChange={(e) => 
+									dispatch({
+										type: 'catchPoolChange',
+										poolChosen: e.target.checked
+									})
+								} 
+							/>
+						} 
+						label="Pool" 
+					/>
+				</Grid>
+
+				<Grid item container sx={{ marginTop: '1rem' }}>
+					<FormControlLabel 
+						control={
+							<Checkbox checked={state.cctvValue} 
+								onChange={(e) => 
+									dispatch({
+										type: 'catchCctvChange',
+										cctvChosen: e.target.checked
+									})
+								} 
+							/>
+						} 
+						label="Cctv" 
+					/>
+				</Grid>
+
+				<Grid item container sx={{ marginTop: '1rem' }}>
+					<FormControlLabel 
+						control={
+							<Checkbox checked={state.parkingValue} 
+								onChange={(e) => 
+									dispatch({
+										type: 'catchParkingChange',
+										parkingChosen: e.target.checked
+									})
+								} 
+							/>
+						} 
+						label="Parking" 
+					/>
+				</Grid>
+
+				<Grid item container justifyContent='space-between'>
+				<Grid item xs={5} sx={{ marginTop: '1rem' }}>
+					<TextField 
+						id="area" 
+						label="Area" 
+						variant="standard" 
+						fullWidth
+						value={state.areaValue}
+						onChange={(e) => 
+							dispatch({
+								type: 'catchAreaChange', 
+								areaChosen: e.target.value
+							})
+						}
+						select
+						SelectProps={{
+							native:true
+						}}
+
+
+						// <select>
+						// 	{areaOptions.map((option) => (
+						// 		<option key={option.value} value={option.value}>
+						// 		{option.label}
+						// 		</option>
+						// 	))}
+						// </select>
+
+					>
+
+						{areaOptions.map((option) => (
+							<option key={option.value} value={option.value}>
+								{option.label}
+							</option>
+						))}
+						
+					</TextField>
+				</Grid>
+
+				<Grid item xs={5} sx={{ marginTop: '1rem' }}>
+					<TextField 
+						id="borough" 
+						label="Borough" 
+						variant="standard" 
+						fullWidth
+						value={state.boroughValue}
+						onChange={(e) => 
+							dispatch({
+								type: 'catchBoroughChange', 
+								boroughChosen: e.target.value
+								})
+							}
+					/>
+				</Grid>
+
 				</Grid>
 	
 				<Grid item container xs={8} sx={{ 

@@ -35,6 +35,152 @@ const areaOptions = [
 	}
 ]
 
+const innerLondonOptions = [
+	{
+		value: "",
+		label: "",
+	},
+	{
+		value: "Camden",
+		label: "Camden",
+	},
+	{
+		value: "Greenwich",
+		label: "Greenwich",
+	},
+	{
+		value: "Hackney",
+		label: "Hackney",
+	},
+	{
+		value: "Hammersmith and Fulham",
+		label: "Hammersmith and Fulham",
+	},
+	{
+		value: "Islington",
+		label: "Islington",
+	},
+	{
+		value: "Kensington and Chelsea",
+		label: "Kensington and Chelsea",
+	},
+	{
+		value: "Lambeth",
+		label: "Lambeth",
+	},
+	{
+		value: "Lewisham",
+		label: "Lewisham",
+	},
+	{
+		value: "Southwark",
+		label: "Southwark",
+	},
+	{
+		value: "Tower Hamlets",
+		label: "Tower Hamlets",
+	},
+	{
+		value: "Wandsworth",
+		label: "Wandsworth",
+	},
+	{
+		value: "Westminster",
+		label: "Westminster",
+	},
+	{
+		value: "City of London",
+		label: "City of London",
+	},
+];
+
+const outerLondonOptions = [
+	{
+		value: "",
+		label: "",
+	},
+	{
+		value: "Barking and Dangenham",
+		label: "Barking and Dangenham",
+	},
+	{
+		value: "Barnet",
+		label: "Barnet",
+	},
+	{
+		value: "Bexley",
+		label: "Bexley",
+	},
+	{
+		value: "Brent",
+		label: "Brent",
+	},
+	{
+		value: "Bromley",
+		label: "Bromley",
+	},
+	{
+		value: "Croydon",
+		label: "Croydon",
+	},
+	{
+		value: "Ealing",
+		label: "Ealing",
+	},
+	{
+		value: "Enfield",
+		label: "Enfield",
+	},
+	{
+		value: "Haringey",
+		label: "Haringey",
+	},
+	{
+		value: "Harrow",
+		label: "Harrow",
+	},
+	{
+		value: "Havering",
+		label: "Havering",
+	},
+	{
+		value: "Hillingdon",
+		label: "Hillingdon",
+	},
+	{
+		value: "Hounslow",
+		label: "Hounslow",
+	},
+	{
+		value: "Kingston upon Thames",
+		label: "Kingston upon Thames",
+	},
+	{
+		value: "Merton",
+		label: "Merton",
+	},
+	{
+		value: "Newham",
+		label: "Newham",
+	},
+	{
+		value: "Redbridge",
+		label: "Redbridge",
+	},
+	{
+		value: "Richmond upon Thames",
+		label: "Richmond upon Thames",
+	},
+	{
+		value: "Sutton",
+		label: "Sutton",
+	},
+	{
+		value: "Waltham Forest",
+		label: "Waltham Forest",
+	},
+]
+
 
 function AddProperty() {
 	const navigate = useNavigate()
@@ -344,60 +490,92 @@ function AddProperty() {
 				</Grid>
 
 				<Grid item container justifyContent='space-between'>
-				<Grid item xs={5} sx={{ marginTop: '1rem' }}>
-					<TextField 
-						id="area" 
-						label="Area" 
-						variant="standard" 
-						fullWidth
-						value={state.areaValue}
-						onChange={(e) => 
-							dispatch({
-								type: 'catchAreaChange', 
-								areaChosen: e.target.value
-							})
-						}
-						select
-						SelectProps={{
-							native:true
-						}}
-
-
-						// <select>
-						// 	{areaOptions.map((option) => (
-						// 		<option key={option.value} value={option.value}>
-						// 		{option.label}
-						// 		</option>
-						// 	))}
-						// </select>
-
-					>
-
-						{areaOptions.map((option) => (
-							<option key={option.value} value={option.value}>
-								{option.label}
-							</option>
-						))}
-						
-					</TextField>
-				</Grid>
-
-				<Grid item xs={5} sx={{ marginTop: '1rem' }}>
-					<TextField 
-						id="borough" 
-						label="Borough" 
-						variant="standard" 
-						fullWidth
-						value={state.boroughValue}
-						onChange={(e) => 
-							dispatch({
-								type: 'catchBoroughChange', 
-								boroughChosen: e.target.value
+					<Grid item xs={5} sx={{ marginTop: '1rem' }}>
+						<TextField 
+							id="area" 
+							label="Area" 
+							variant="standard" 
+							fullWidth
+							value={state.areaValue}
+							onChange={(e) => 
+								dispatch({
+									type: 'catchAreaChange', 
+									areaChosen: e.target.value
 								})
 							}
-					/>
+							select
+							SelectProps={{
+								native:true
+							}}
+
+
+							// <select>
+							// 	{areaOptions.map((option) => (
+							// 		<option key={option.value} value={option.value}>
+							// 		{option.label}
+							// 		</option>
+							// 	))}
+							// </select>
+
+						>
+
+							{areaOptions.map((option) => (
+								<option key={option.value} value={option.value}>
+									{option.label}
+								</option>
+							))}
+
+						</TextField>
+					</Grid>
+
+					<Grid item xs={5} sx={{ marginTop: '1rem' }}>
+						<TextField 
+							id="borough" 
+							label="Borough" 
+							variant="standard" 
+							fullWidth
+							value={state.boroughValue}
+							onChange={(e) => 
+								dispatch({
+									type: 'catchBoroughChange', 
+									boroughChosen: e.target.value
+								})
+							}
+							select
+							SelectProps={{
+								native:true
+							}}
+						>
+							{state.areaValue === 'Inner London' 
+								? innerLondonOptions.map((option) => (
+									<option key={option.value} value={option.value}>
+										{option.label}
+									</option>
+								))
+							:''}
+
+							{state.areaValue === 'Outer London' 
+								? outerLondonOptions.map((option) => (
+									<option key={option.value} value={option.value}>
+										{option.label}
+									</option>
+								))
+							:''}
+								
+						</TextField>
+					</Grid>
+
 				</Grid>
 
+
+				{/* Map */}
+				<Grid item container sx={{height: '35rem', marginTop: '1rem'}}>
+					<MapContainer center={[51.505, -0.09]} zoom={14} scrollWheelZoom={true}>
+						<TileLayer
+							attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+							url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+						/>
+					</MapContainer>
 				</Grid>
 	
 				<Grid item container xs={8} sx={{ 

@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { useImmerReducer } from 'use-immer'
 import Axios from 'axios'
 
+// React Leaflet
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+
 // MUI
 import { 
     AppBar, 
@@ -207,6 +210,7 @@ function AddProperty() {
 		picture3Value: '',
 		picture4Value: '',
 		picture5Value: '',
+		mapInstance: null,
     }
 
     function ReducerFunction(draft, action) {
@@ -294,11 +298,21 @@ function AddProperty() {
 			case 'catchPicture5Change':
 				draft.picture5Value = action.picture5Chosen
 				break
+
+			case 'getMap':
+				draft.mapInstance = action.mapData
+				break
         }
     }
 
     // const [state, dispatch] = useReducer(ReducerFunction, initialState)
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
+
+	function TheMapComponent() {
+		const map = useMap()
+		dispatch({ type: 'getMap', mapData: map })
+		return null
+	}
 
 	function formSubmit(e) {
         e.preventDefault()
@@ -575,6 +589,7 @@ function AddProperty() {
 							attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 							url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 						/>
+						<TheMapComponent/>
 					</MapContainer>
 				</Grid>
 	
@@ -587,6 +602,10 @@ function AddProperty() {
 				</Grid>
 		   
 			</form>
+
+			<Button onClick={() => console.log(state.mapInstance.getCenter())}>
+				Test Button
+			</Button>
 
 		</div>
 	)

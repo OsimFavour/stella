@@ -1,9 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import Axios from 'axios'
 
-// React Leaflet
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-
 // MUI
 import { 
     AppBar, 

@@ -309,6 +309,8 @@ function AddProperty() {
 		},
 		uploadedPictures: [],
 		sendRequest: 0,
+		
+		
     } 
 
     function ReducerFunction(draft, action) {
@@ -416,10 +418,16 @@ function AddProperty() {
 				draft.sendRequest = draft.sendRequest + 1
 				break
 
+			case 'catchUserProfileInfo':
+				console.log('Updating state with agencyName:', action.profileObject.agency_name)
+				console.log('Updating state with phoneNumber:', action.profileObject.phone_number)
+
+				draft.userProfile.agencyName = action.profileObject.agency_name
+				draft.userProfile.phoneNumber = action.profileObject.phone_number
+
         }
     }
 
-    // const [state, dispatch] = useReducer(ReducerFunction, initialState)
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
 
 	function TheMapComponent() {
@@ -815,6 +823,29 @@ function AddProperty() {
 	}, [state.uploadedPictures[4]])
 
 
+	// REQUEST TO GET PROFILE INFO
+
+	useEffect(() => {
+		async function GetProfileInfo() {
+			try {
+				const response = await Axios.get(
+					`http://localhost:8000/api/profiles/${GlobalState.userId}/`
+				)
+				// console.log(response.data)
+				console.log('Dispatching catchUserProfileInfo action with data:', response.data)
+				dispatch({
+					type: 'catchUserProfileInfo',
+					profileObject: response.data,
+				})
+			}
+			catch(e) {
+				console.log(e.response)
+			}
+		}
+		GetProfileInfo()
+	}, [])
+
+
 	function formSubmit(e) {
         e.preventDefault()
         console.log('The form has been submitted')
@@ -879,6 +910,43 @@ function AddProperty() {
 		}
 		else {
 			return 'Price*'
+		}
+	}
+
+
+	function SubmitButtonDisplay() {
+		console.log('GlobalState.userIsLogged:', GlobalState.userIsLogged);
+  		console.log('state.userProfile:', state.userProfile)
+		if (
+			GlobalState.userIsLogged && 
+			state.userProfile.agencyName !== null && 
+			state.userProfile.agencyName !== '' && 
+			state.userProfile.phoneNumber !== null && 
+			state.userProfile.phoneNumber !== ''
+			) {
+				console.log('First branch executed')
+			return (
+				<Button variant='contained' type='submit' fullWidth>Submit</Button>
+			)
+		}
+		else if (
+			GlobalState.userIsLogged && (
+				state.userProfile.agencyName === null || 
+				state.userProfile.agencyName === '' || 
+				state.userProfile.phoneNumber === null || 
+				state.userProfile.phoneNumber === ''
+			)
+		) {
+			console.log('Second branch executed')
+			return (
+				<Button variant='contained' type='submit' fullWidth onClick={() => navigate('/profile')}>Complete Your Profile to Add a Property</Button>
+			)
+		}
+		else if (!GlobalState.userIsLogged) {
+			console.log('Third branch executed')
+			return (
+				<Button variant='outlined' type='submit' fullWidth onClick={() => navigate('/login')}>Sign In To Add a Property</Button>
+			)
 		}
 	}
 
@@ -1263,7 +1331,8 @@ function AddProperty() {
 					marginLeft: 'auto',
 					marginRight: 'auto',
 					fontSize: '1.1rem' }}>
-					<Button variant='contained' type='submit' fullWidth>Submit</Button>
+					{SubmitButtonDisplay()}
+					{/* <Button variant='contained' type='submit' fullWidth>Submit</Button> */}
 				</Grid>
 	 	   
 			</form>

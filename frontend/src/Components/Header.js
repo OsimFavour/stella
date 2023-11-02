@@ -23,6 +23,12 @@ function Header() {
     const handleClose = () => {
         setAnchorEl(null)
     }
+
+    const handleProfile = () => {
+        setAnchorEl(null)
+        navigate('/profile')
+    }
+
     
     const handleLogout = async () => {
         setAnchorEl(null)
@@ -115,7 +121,7 @@ function Header() {
                         'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem onClick={handleProfile}>Profile</MenuItem>
                         <MenuItem onClick={handleClose}>My account</MenuItem>
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </Menu>

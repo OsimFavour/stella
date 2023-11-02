@@ -1,10 +1,13 @@
-import React, {useEffect, useState, useRef, useMemo} from 'react'
+import React, {useEffect, useState, useRef, useMemo, useContext} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useImmerReducer } from 'use-immer'
 import Axios from 'axios'
 
 // React Leaflet
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polygon } from 'react-leaflet'
+
+// Contexts
+import StateContext from '../Contexts/StateContext'
 
 // Boroughs
 import Camden from "./Assets/Boroughs/Camden"
@@ -54,7 +57,7 @@ import {
     CircularProgress,
     TextField,
 	FormControlLabel,
-	Checkbox
+	Checkbox,
 } from '@mui/material'
 
 
@@ -275,6 +278,7 @@ const rentalFrequencyOptions = [
 
 function AddProperty() {
 	const navigate = useNavigate()
+	const GlobalState = useContext(StateContext)
 
 	const initialState = {
         titleValue: '',
@@ -303,7 +307,8 @@ function AddProperty() {
 			lat: '51.505',
 			lng: '-0.09'
 		},
-		uploadedPictures: []
+		uploadedPictures: [],
+		sendRequest: 0,
     } 
 
     function ReducerFunction(draft, action) {
@@ -405,6 +410,10 @@ function AddProperty() {
 
 			case 'catchUploadedPictures':
 				draft.uploadedPictures = action.picturesChosen
+				break
+
+			case 'changeSendRequest':
+				draft.sendRequest = draft.sendRequest + 1
 				break
 
         }
@@ -809,21 +818,67 @@ function AddProperty() {
 	function formSubmit(e) {
         e.preventDefault()
         console.log('The form has been submitted')
-        // dispatch({type: 'changeSendRequest'})
+		// Make Request when The Send Request is Incremented 
+		// i.e. when the submit button is clicked
+        dispatch({type: 'changeSendRequest'})
     }
+
+	// SEND REQUESTS
+	useEffect(() => {
+		if (state.sendRequest) {
+			async function AddProperty() {
+				const formData = new FormData()
+				// Here we will append key value pairs
+
+				formData.append('title', state.titleValue)
+				formData.append('description', state.descriptionValue)
+				formData.append('area', state.areaValue)
+				formData.append('borough', state.boroughValue)
+				formData.append('listing_type', state.listingTypeValue)
+				formData.append('property_status', state.propertyStatusValue)
+				formData.append('price', state.priceValue)
+				formData.append('rental_frequency', state.rentalFrequencyValue)
+				formData.append('rooms', state.roomsValue)
+				formData.append('furnished', state.furnishedValue)
+				formData.append('pool', state.poolValue)
+				formData.append('elevator', state.elevatorValue)
+				formData.append('cctv', state.cctvValue)
+				formData.append('parking', state.parkingValue)
+				formData.append('latitude', state.latitudeValue)
+				formData.append('longitude', state.longitudeValue)
+				formData.append('picture1', state.picture1Value)
+				formData.append('picture2', state.picture2Value)
+				formData.append('picture3', state.picture3Value)
+				formData.append('picture4', state.picture4Value)
+				formData.append('picture5', state.picture5Value)
+				formData.append('seller', GlobalState.userId)
+
+				try {
+					let url = 'http://localhost:8000/api/listings/create'
+					const response = await Axios.post(url, formData)
+					console.log(response.data)
+					navigate('/listings')
+				}
+				catch(e) {
+					console.log(e.response)
+				}
+			}
+			AddProperty()
+		}
+	}, [state.sendRequest])
 
 	function PriceDisplay() {
 		if (state.propertyStatusValue === 'Rent' && state.rentalFrequencyValue === 'Day') {
-			return 'Price per Day'
+			return 'Price per Day*'
 		}
 		else if (state.propertyStatusValue === 'Rent' && state.rentalFrequencyValue === 'Week') {
-			return 'Price per Week'
+			return 'Price per Week*'
 		}
 		else if (state.propertyStatusValue === 'Rent' && state.rentalFrequencyValue === 'Month') {
-			return 'Price per Month'
+			return 'Price per Month*'
 		}
 		else {
-			return 'Price'
+			return 'Price*'
 		}
 	}
 
@@ -843,7 +898,7 @@ function AddProperty() {
 				<Grid item container sx={{ marginTop: '1rem' }}>
 					<TextField 
 						id="title" 
-						label="Title" 
+						label="Title*" 
 						variant="standard" 
 						fullWidth
 						value={state.titleValue}
@@ -854,7 +909,7 @@ function AddProperty() {
 					<Grid item xs={5} sx={{ marginTop: '1rem' }}>
 						<TextField 
 							id="ListingType" 
-							label="Listing Type" 
+							label="Listing Type*" 
 							variant="standard" 
 							fullWidth
 							value={state.listingTypeValue}
@@ -880,7 +935,7 @@ function AddProperty() {
 					<Grid item xs={5} sx={{ marginTop: '1rem' }}>
 						<TextField 
 							id="propertyStatus" 
-							label="Property Status" 
+							label="Property Status*" 
 							variant="standard" 
 							fullWidth
 							value={state.propertyStatusValue}
@@ -935,6 +990,7 @@ function AddProperty() {
 					<Grid item xs={5} sx={{ marginTop: '1rem' }}>
 						<TextField 
 							id="price" 
+							type='number'
 							label={PriceDisplay()} 
 							variant="standard" 
 							fullWidth
@@ -973,7 +1029,8 @@ function AddProperty() {
 					<Grid item xs={3} container sx={{ marginTop: '1rem' }}>
 						<TextField 
 							id="rooms" 
-							label="Rooms" 
+							label="Rooms"
+							type='number' 
 							variant="standard" 
 							fullWidth
 							value={state.roomsValue}
@@ -987,8 +1044,8 @@ function AddProperty() {
 					</Grid>
 				)}
 
-				<Grid item container>
-					<Grid item sx={{ marginTop: '1rem' }}>
+				<Grid item container justifyContent='space-between'>
+					<Grid item xs={2} sx={{ marginTop: '1rem' }}>
 						<FormControlLabel 
 							control={
 								<Checkbox checked={state.furnishedValue} 
@@ -1005,7 +1062,7 @@ function AddProperty() {
 					</Grid>
 
 
-					<Grid item sx={{ marginTop: '1rem' }}>
+					<Grid item xs={2} sx={{ marginTop: '1rem' }}>
 						<FormControlLabel 
 							control={
 								<Checkbox checked={state.poolValue} 
@@ -1021,7 +1078,23 @@ function AddProperty() {
 						/>
 					</Grid>
 
-					<Grid item sx={{ marginTop: '1rem' }}>
+					<Grid item xs={2} sx={{ marginTop: '1rem' }}>
+						<FormControlLabel 
+							control={
+								<Checkbox checked={state.elevatorValue} 
+									onChange={(e) => 
+										dispatch({
+											type: 'catchElevatorChange',
+											elevatorChosen: e.target.checked
+										})
+									} 
+								/>
+							} 
+							label="Elevator" 
+						/>
+					</Grid>
+
+					<Grid item xs={2} sx={{ marginTop: '1rem' }}>
 						<FormControlLabel 
 							control={
 								<Checkbox checked={state.cctvValue} 
@@ -1037,7 +1110,7 @@ function AddProperty() {
 						/>
 					</Grid>
 
-					<Grid item sx={{ marginTop: '1rem' }}>
+					<Grid item xs={2} sx={{ marginTop: '1rem' }}>
 						<FormControlLabel 
 							control={
 								<Checkbox checked={state.parkingValue} 
@@ -1058,7 +1131,7 @@ function AddProperty() {
 					<Grid item xs={5} sx={{ marginTop: '1rem' }}>
 						<TextField 
 							id="area" 
-							label="Area" 
+							label="Area*" 
 							variant="standard" 
 							fullWidth
 							value={state.areaValue}
@@ -1087,7 +1160,7 @@ function AddProperty() {
 					<Grid item xs={5} sx={{ marginTop: '1rem' }}>
 						<TextField 
 							id="borough" 
-							label="Borough" 
+							label="Borough*" 
 							variant="standard" 
 							fullWidth
 							value={state.boroughValue}

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import Axios from 'axios'
+import { useImmerReducer } from 'use-immer'
 
 // MUI
 import { 
@@ -11,8 +12,11 @@ import {
     CardHeader, 
     CardMedia, 
     CardContent,
-    CircularProgress
+    CircularProgress,
+    IconButton,
+    CardActions
 } from '@mui/material'
+import RoomIcon from '@mui/icons-material/Room'
 
 // React Leaflet
 import { MapContainer, TileLayer, useMap, Marker, Popup, Polyline, Polygon } from 'react-leaflet'
@@ -53,6 +57,27 @@ function Listings() {
 
     const [latitude, setLatitude] = useState(51.4874086523002)
     const [longitude, setLongitude] = useState(-0.12667052265135625)
+
+    const initialState = {
+		mapInstance: null,
+    } 
+
+    function ReducerFunction(draft, action) {
+        switch(action.type) {
+			case 'getMap':
+				draft.mapInstance = action.mapData
+				break
+        }
+    }
+
+    // const [state, dispatch] = useReducer(ReducerFunction, initialState)
+    const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
+
+	function TheMapComponent() {
+		const map = useMap()
+		dispatch({ type: 'getMap', mapData: map })
+		return null
+	}
 
     function GoEast() {
         setLatitude(51.46567014039476) 
@@ -124,11 +149,21 @@ function Listings() {
                     position: 'relative'
                     }}>
                     <CardHeader
-                        // action={
-                        // <IconButton aria-label="settings">
-                        //     <MoreVertIcon />
-                        // </IconButton>
-                        // }
+                        action={
+                        // The flyTo method takes two arguments
+                        // i.e. A pair of cordinates and a zoom level
+                        <IconButton 
+                            aria-label="settings" 
+                            onClick={() => 
+                                state.mapInstance.flyTo(
+                                    [listing.latitude, listing.longitude],
+                                    16
+                                )
+                            }
+                        >
+                            <RoomIcon />
+                        </IconButton>
+                        }
                         title={listing.title}
                     />
                     <CardMedia
@@ -179,14 +214,11 @@ function Listings() {
                         </Typography>
                     )}
                     
-                    {/* <CardActions disableSpacing>
+                    <CardActions disableSpacing>
                         <IconButton aria-label="add to favorites">
-                        <FavoriteIcon />
+                            {listing.seller_username}
                         </IconButton>
-                        <IconButton aria-label="share">
-                        <ShareIcon />
-                        </IconButton>
-                    </CardActions> */}
+                    </CardActions>
                 </Card>
             )
            })}
@@ -200,14 +232,8 @@ function Listings() {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    
-                    {/* <Polyline positions={polyOne} weight={10} color='green'/>
-                    <Polygon 
-                        positions={polygonOne}
-                        color='yellow'
-                        fillColor='blue'
-                        fillOpacity={0.9}
-                        opacity={0} /> */}
+
+                    <TheMapComponent/>
 
                     {allListings.map((listing) => {
                         function IconDisplay() {

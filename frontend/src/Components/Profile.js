@@ -69,7 +69,85 @@ function Profile() {
 
     return (
     
-    <div>Profile</div>
+    <>
+        <div>
+            <Typography 
+                variant='h5' 
+                sx={{
+                    textAlign: 'center', 
+                    marginTop: '1rem'
+                }}
+            >
+                Welcome{' '}
+                <span style={{ color: 'blue', fontWeight: 'bolder'}}>
+                    {GlobalState.userUsername}
+                </span>{' '}
+                , Submit to Update Profile
+            </Typography>
+        </div>
+
+        <div style={{ 
+            width: '50%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            border: '5px solid white' }}>
+            <form>
+                <Grid item container justifyContent='center' sx={{ marginTop: '1rem' }}>
+                    <Typography variant='h4'>Profile</Typography>
+                </Grid>
+                <Grid item container sx={{ marginTop: '1rem' }}>
+                    <TextField 
+                        id="agencyName" 
+                        label="Username" 
+                        variant="outlined" 
+                        fullWidth
+                        value={state.usernameValue}
+                        onChange={(e) => 
+                            dispatch({
+                                type: 'catchUsernameChange', 
+                                usernameChosen: e.target.value
+                                })}
+                    />
+                </Grid>
+                <Grid item container sx={{ marginTop: '1rem' }}>
+                    <TextField 
+                        id="password" 
+                        label="Password" 
+                        variant="outlined" 
+                        type='password' 
+                        fullWidth
+                        value={state.passwordValue}
+                        onChange={(e) => 
+                            dispatch({
+                                type: 'catchPasswordChange', 
+                                passwordChosen: e.target.value
+                                })}/>
+                </Grid>
+                <Grid item container xs={8} sx={{ 
+                    marginTop: '1rem',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    fontSize: '1.1rem' }}>
+                    <Button 
+                        variant='contained' 
+                        type='submit' 
+                        fullWidth
+                    >Sign In</Button>
+                </Grid>
+        
+            </form>
+            {/* This sent a message to the frontend */}
+            {/* {GlobalState.globalMessage} */}
+
+            {/* {GlobalState.userToken} */}
+            
+
+            <Grid item container justifyContent='center' sx={{ marginTop: '1rem' }}>
+                    <Typography variant='small'>Don't Have An Accout? {' '}
+                    <span onClick={() => navigate('/register')} style={{ cursor: 'pointer', color: ''}}>Sign Up</span></Typography>
+            </Grid>
+        </div>
+    </>
   )
 }
 

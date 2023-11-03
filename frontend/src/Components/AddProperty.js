@@ -309,8 +309,10 @@ function AddProperty() {
 		},
 		uploadedPictures: [],
 		sendRequest: 0,
-		
-		
+		userProfile: {
+			agencyName: '',
+			phoneNumber: ''
+		}
     } 
 
     function ReducerFunction(draft, action) {
@@ -428,6 +430,7 @@ function AddProperty() {
         }
     }
 
+    // const [state, dispatch] = useReducer(ReducerFunction, initialState)
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
 
 	function TheMapComponent() {

@@ -17,6 +17,7 @@ import Register from './Components/Register'
 import ReducerTest from './Components/ReducerTest'
 import ResponsiveAppBar from './Components/ResponsiveAppbar'
 import AddProperty from './Components/AddProperty'
+import Profile from './Components/Profile'
 
 // Contexts
 import DispatchContext from './Contexts/DispatchContext'
@@ -86,6 +87,7 @@ function App() {
           <Route path='/login' element={<Login/>}/>
           <Route path='/register' element={<Register/>}/>
           <Route path='/addproperty' element={<AddProperty/>}/>
+          <Route path='/profile' element={<Profile/>}/>
           <Route path='/listings' element={<Listings/>}/>
           <Route path='/testing' element={<Testing/>}/>
           <Route path='/reducer' element={<ReducerTest/>}/>

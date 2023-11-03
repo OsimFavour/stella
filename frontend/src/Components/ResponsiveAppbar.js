@@ -221,8 +221,8 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={setting === 'Logout' ? handleLogout : (setting === 'Profile' ? handleProfile : handleCloseUserMenu)}>
-                {/* <MenuItem key={setting} onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}> */}
+                // <MenuItem key={setting} onClick={setting === 'Logout' ? handleLogout : (setting === 'Profile' ? handleProfile : handleCloseUserMenu)}>
+                <MenuItem key={setting} onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}>
                   <Typography textAlign="center"><Button key={setting} onClick={() => navigate(`/${setting}`)}>{setting}</Button></Typography>
                 </MenuItem>
               ))}

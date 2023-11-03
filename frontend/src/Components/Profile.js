@@ -9,6 +9,7 @@ import StateContext from '../Contexts/StateContext'
 // MUI
 import { 
     AppBar, 
+    Avatar,
     Button, 
     Grid, 
     Typography, 
@@ -17,11 +18,22 @@ import {
     CardMedia, 
     CardContent,
     CircularProgress,
+    Paper,
     TextField,
 	FormControlLabel,
 	Checkbox,
 } from '@mui/material'
 
+import { styled } from '@mui/material/styles'
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(2),
+    maxWidth: 400,
+    color: theme.palette.text.primary,
+  }));
+  
 
 function Profile() {
 
@@ -31,8 +43,16 @@ function Profile() {
     const initialState = {
         userProfile: {
 			agencyName: '',
-			phoneNumber: ''
-		}
+			phoneNumber: '',
+            profilePic: '',
+            bio: '',
+		},
+        agencyNameValue: '',
+        phoneNumberValue: '',
+        bioValue: '',
+        uploadedPicture: [],
+        profilePictureValue: '',
+        sendRequest: 0
     }
 
     function ReducerFunction(draft, action) {
@@ -41,11 +61,48 @@ function Profile() {
                 draft.userProfile.agencyName = action.profileObject.agency_name
                 draft.userProfile.phoneNumber = action.profileObject.phone_number
                 break
+            
+            case 'catchAgencyNameChange':
+                draft.agencyNameValue = action.agencyNameChosen
+                break
+
+            case 'catchPhoneNumberChange':
+                draft.phoneNumberValue = action.phoneNumberChosen
+                break
+            
+            case 'catchBioChange':
+                draft.bioValue = action.bioChosen
+                break
+
+            case 'catchUploadedPicture':
+                draft.uploadedPicture = action.pictureChosen
+                break
+            
+            case 'catchProfilePictureChange':
+                draft.profilePictureValue = action.profilePictureChosen
+                break
+
+            case 'changeSendRequest':
+                draft.sendRequest = draft.sendRequest + 1
+                break
+            
         }
     }
 
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
 
+    // Use Effect to catch uploaded picture.
+    useEffect(() => {
+        if (state.uploadedPicture[0]) {
+            dispatch({
+                type: 'catchProfilePictureChange',
+                profilePictureChosen: state.uploadedPicture[0]
+            })
+        }
+    }, [state.uploadedPicture[0]])
+
+
+    // Request to Get Profile Info
     useEffect(() => {
 		async function GetProfileInfo() {
 			try {
@@ -67,62 +124,188 @@ function Profile() {
 	}, [])
 
 
+    // SEND REQUESTS
+	useEffect(() => {
+		if (state.sendRequest) {
+            
+            const UpdateProfile = async () => {
+				const formData = new FormData()
+				// Here we will append key value pairs
+
+                formData.append('seller', GlobalState.userId)
+                formData.append('agency_name', state.agencyNameValue)
+                formData.append('phone_number', state.phoneNumberValue)
+                formData.append('bio', state.bioValue)
+                formData.append('profile_picture', state.profilePictureValue)
+
+				try {
+					let url = `http://localhost:8000/api/profiles/${GlobalState.userId}/update/`
+                    // This will be a patch request since the Profile already exists
+					const response = await Axios.patch(url, formData)
+					console.log(response.data)
+					// navigate('/listings')
+				}
+				catch(e) {
+					console.log(e.response)
+				}
+			}
+			UpdateProfile()
+		}
+	}, [state.sendRequest])
+
+    const FormSubmit = (e) => {
+        e.preventDefault()
+        console.log('The form has been submitted')
+        dispatch({type: 'changeSendRequest'})
+    }
+
+    const WelcomeDisplay = () => {
+        if (
+            state.userProfile.agencyName === null || 
+            state.userProfile.agencyName === '' || 
+            state.userProfile.phoneNumber === null || 
+            state.userProfile.phoneNumber === ''
+            ) {
+            return (
+                <StyledPaper
+                    sx={{
+                    my: 1,
+                    mx: 'auto',
+                    p: 2,
+                    }}
+                >
+                    <Grid container wrap="nowrap" spacing={2}>
+                        <Grid item>
+                            <Avatar>S</Avatar>
+                        </Grid>
+                        <Grid item xs>
+                            <Typography>Welcome {GlobalState.userUsername}!</Typography>
+                            <Typography variant='p'>Submit to Update Profile</Typography>
+                        </Grid>
+                    </Grid>
+                </StyledPaper>
+            )
+        }
+        else {
+            return (
+                <Grid container>
+                    <Grid item></Grid>
+                    <Grid item></Grid>
+                </Grid>
+            )
+        }
+    }
+
     return (
     
     <>
         <div>
-            <Typography 
-                variant='h5' 
-                sx={{
-                    textAlign: 'center', 
-                    marginTop: '1rem'
-                }}
-            >
-                Welcome{' '}
-                <span style={{ color: 'blue', fontWeight: 'bolder'}}>
-                    {GlobalState.userUsername}
-                </span>{' '}
-                , Submit to Update Profile
-            </Typography>
+            {WelcomeDisplay()}
         </div>
 
         <div style={{ 
             width: '50%',
             marginLeft: 'auto',
             marginRight: 'auto',
-            border: '5px solid white' }}>
-            <form>
-                <Grid item container justifyContent='center' sx={{ marginTop: '1rem' }}>
+            border: '5px solid white' 
+            }}
+        >
+            <form onSubmit={FormSubmit}>
+                {/* <Grid item container justifyContent='center' sx={{ marginTop: '1rem' }}>
                     <Typography variant='h4'>Profile</Typography>
-                </Grid>
+                </Grid> */}
                 <Grid item container sx={{ marginTop: '1rem' }}>
                     <TextField 
                         id="agencyName" 
-                        label="Username" 
+                        label="Agency Name*" 
                         variant="outlined" 
                         fullWidth
                         value={state.usernameValue}
                         onChange={(e) => 
                             dispatch({
-                                type: 'catchUsernameChange', 
-                                usernameChosen: e.target.value
+                                type: 'catchAgencyNameChange', 
+                                agencyNameChosen: e.target.value
                                 })}
                     />
                 </Grid>
                 <Grid item container sx={{ marginTop: '1rem' }}>
                     <TextField 
-                        id="password" 
-                        label="Password" 
+                        id="phoneNumber" 
+                        label="Phone Number*" 
                         variant="outlined" 
-                        type='password' 
                         fullWidth
-                        value={state.passwordValue}
+                        value={state.phoneNumberValue}
                         onChange={(e) => 
                             dispatch({
-                                type: 'catchPasswordChange', 
-                                passwordChosen: e.target.value
+                                type: 'catchPhoneNumberChange', 
+                                phoneNumberChosen: e.target.value
                                 })}/>
                 </Grid>
+
+                <Grid item container sx={{ marginTop: '1rem' }}>
+                    <TextField 
+                        id="bio" 
+                        label="Bio" 
+                        variant="outlined" 
+                        multiline
+                        rows={6}
+                        fullWidth
+                        value={state.bioValue}
+                        onChange={(e) => 
+                            dispatch({
+                                type: 'catchBioChange', 
+                                bioChosen: e.target.value
+                            })
+                        }
+                    />
+                </Grid>
+
+                <Grid item container xs={6} sx={{ 
+					marginTop: '1rem',
+					marginLeft: 'auto',
+					marginRight: 'auto',
+					fontSize: '1.1rem' }}>
+					<Button 
+						variant='outlined'
+						component='label'
+						fullWidth 
+						sx={{ 
+							fontSize: '0.8rem'
+						}}
+					>
+						Profile Picture
+						<input 
+							type='file'
+							accept='image/png, image/gif, image/jpeg, image/jpg'
+							hidden
+							onChange={(e) => dispatch({
+								type: 'catchUploadedPicture',
+								pictureChosen: e.target.files
+							})}
+						/>
+					</Button>
+				</Grid>
+
+                {/* <Grid item container>
+                    <Typography>
+                        {state.profilePictureValue ? <li>{state.profilePictureValue.name}</li> : ''}
+                    </Typography>
+				</Grid> */}
+
+                <StyledPaper
+                    sx={{
+                    my: 1,
+                    mx: 'auto',
+                    p: 0,
+                    }}
+                >
+                    <Grid container>
+                        <Typography>
+                            {state.profilePictureValue ? <li>{state.profilePictureValue.name}</li> : ''}
+                        </Typography>
+                    </Grid>
+                </StyledPaper>
+
                 <Grid item container xs={8} sx={{ 
                     marginTop: '1rem',
                     marginLeft: 'auto',
@@ -132,7 +315,7 @@ function Profile() {
                         variant='contained' 
                         type='submit' 
                         fullWidth
-                    >Sign In</Button>
+                    >Update</Button>
                 </Grid>
         
             </form>
@@ -140,12 +323,7 @@ function Profile() {
             {/* {GlobalState.globalMessage} */}
 
             {/* {GlobalState.userToken} */}
-            
-
-            <Grid item container justifyContent='center' sx={{ marginTop: '1rem' }}>
-                    <Typography variant='small'>Don't Have An Accout? {' '}
-                    <span onClick={() => navigate('/register')} style={{ cursor: 'pointer', color: ''}}>Sign Up</span></Typography>
-            </Grid>
+        
         </div>
     </>
   )

@@ -6,6 +6,7 @@ import Axios from 'axios'
 // MUI
 import { 
     AppBar, 
+    Avatar,
     Button, 
     Grid, 
     Typography, 
@@ -14,8 +15,10 @@ import {
     CardMedia, 
     CardContent,
     CircularProgress,
+    Paper,
     TextField
 } from '@mui/material'
+
 
 // Contexts
 import DispatchContext from '../Contexts/DispatchContext'
@@ -136,6 +139,7 @@ function Login() {
             <Grid item container justifyContent='center' sx={{ marginTop: '1rem' }}>
                 <Typography variant='h4'>Sign In Here</Typography>
             </Grid>
+
             <Grid item container sx={{ marginTop: '1rem' }}>
                 <TextField 
                     id="username" 

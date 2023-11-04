@@ -21,7 +21,7 @@ import {
   MenuItem 
 } from '@mui/material'
 
-const pages = ['Listings', 'Agencies', 'AddProperty', 'Login']
+const pages = ['Listings', 'Agencies', 'Add_Property', 'Login']
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
 function ResponsiveAppBar() {

@@ -6,9 +6,6 @@ import Axios from 'axios'
 // Contexts
 import StateContext from '../Contexts/StateContext'
 
-// Assets
-import defaultProfilePicture from './Assets/defaultProfilePicture.jpg'
-
 // MUI
 import { 
     AppBar, 
@@ -153,9 +150,31 @@ function ProfileUpdate(props) {
         }
         else if (typeof state.profilePictureValue === 'string') {
             return (
-                <Grid item sx={{ marginTop: '0.5rem', marginRight: 'auto', marginLeft: 'auto'}}>
-                    <img src={props.userProfile.profilePic} style={{ height: '5rem', width: '5rem'}}/>
-                </Grid>
+
+                <StyledPaper
+                    sx={{
+                    my: 1,
+                    mx: 'auto',
+                    p: 2,
+                    }}
+                >
+                    <Grid container wrap="nowrap" spacing={2}>
+                        <Grid item>
+                            <Avatar>
+                                <img 
+                                    style={{height: '2rem', width: '9rem'}} 
+                                    src={props.userProfile.profilePic}
+                                />
+                            </Avatar>
+                        </Grid>
+                        <Grid item xs>
+                            <Typography>Current Profile Picture</Typography>
+                        </Grid>
+                    </Grid>
+                </StyledPaper>
+                // <Grid item sx={{ marginTop: '0.5rem', marginRight: 'auto', marginLeft: 'auto'}}>
+                //     <img src={props.userProfile.profilePic} style={{ height: '5rem', width: '5rem'}}/>
+                // </Grid>
             )
         }
     }
@@ -218,18 +237,10 @@ function ProfileUpdate(props) {
                         }
                     />
                 </Grid>
-
-                <StyledPaper
-                    sx={{
-                    my: 1,
-                    mx: 'auto',
-                    p: 0,
-                    }}
-                >
-                    <Grid container>
-                        {ProfilePictureDisplay()}
-                    </Grid>
-                </StyledPaper>
+                    
+                <Grid container>
+                    {ProfilePictureDisplay()}
+                </Grid>
 
                 <Grid item container xs={6} sx={{ 
 					marginTop: '1rem',
@@ -262,20 +273,6 @@ function ProfileUpdate(props) {
                         {state.profilePictureValue ? <li>{state.profilePictureValue.name}</li> : ''}
                     </Typography>
 				</Grid> */}
-
-                <StyledPaper
-                    sx={{
-                    my: 1,
-                    mx: 'auto',
-                    p: 0,
-                    }}
-                >
-                    <Grid container>
-                        <Typography>
-                            {state.profilePictureValue ? <li>{state.profilePictureValue.name}</li> : ''}
-                        </Typography>
-                    </Grid>
-                </StyledPaper>
 
                 <Grid item container xs={8} sx={{ 
                     marginTop: '1rem',

@@ -136,6 +136,7 @@ function Listings() {
             </Grid>
         )
     }
+    
     return (
     <Grid container>
         <Grid item xs={4}>

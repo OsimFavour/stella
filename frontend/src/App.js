@@ -18,6 +18,7 @@ import ReducerTest from './Components/ReducerTest'
 import ResponsiveAppBar from './Components/ResponsiveAppbar'
 import AddProperty from './Components/AddProperty'
 import Profile from './Components/Profile'
+import Agencies from './Components/Agencies'
 
 // Contexts
 import DispatchContext from './Contexts/DispatchContext'
@@ -88,6 +89,7 @@ function App() {
           <Route path='/register' element={<Register/>}/>
           <Route path='/add_property' element={<AddProperty/>}/>
           <Route path='/profile' element={<Profile/>}/>
+          <Route path='/agencies' element={<Agencies/>}/>
           <Route path='/listings' element={<Listings/>}/>
           <Route path='/testing' element={<Testing/>}/>
           <Route path='/reducer' element={<ReducerTest/>}/>

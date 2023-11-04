@@ -6,6 +6,9 @@ import Axios from 'axios'
 // Contexts
 import StateContext from '../Contexts/StateContext'
 
+// Assets
+import defaultProfilePicture from './Assets/defaultProfilePicture.jpg'
+
 // MUI
 import { 
     AppBar, 
@@ -35,17 +38,19 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   }));
   
 
-function ProfileUpdate() {
+function ProfileUpdate(props) {
 
     const navigate = useNavigate()
 	const GlobalState = useContext(StateContext)
 
+    console.log(props.userProfile)
+
     const initialState = {
-        agencyNameValue: '',
-        phoneNumberValue: '',
-        bioValue: '',
+        agencyNameValue: props.userProfile.agencyName,
+        phoneNumberValue: props.userProfile.phoneNumber,
+        bioValue: props.userProfile.bio,
         uploadedPicture: [],
-        profilePictureValue: '',
+        profilePictureValue: props.userProfile.profilePic,
         sendRequest: 0
     }
 
@@ -102,18 +107,27 @@ function ProfileUpdate() {
 				const formData = new FormData()
 				// Here we will append key value pairs
 
-                formData.append('seller', GlobalState.userId)
-                formData.append('agency_name', state.agencyNameValue)
-                formData.append('phone_number', state.phoneNumberValue)
-                formData.append('bio', state.bioValue)
-                formData.append('profile_picture', state.profilePictureValue)
+                if (typeof state.profilePictureValue === 'string' || state.profilePictureValue === null) {
+                    formData.append('seller', GlobalState.userId)
+                    formData.append('agency_name', state.agencyNameValue)
+                    formData.append('phone_number', state.phoneNumberValue)
+                    formData.append('bio', state.bioValue)
+                }
+                else {
+                    formData.append('seller', GlobalState.userId)
+                    formData.append('agency_name', state.agencyNameValue)
+                    formData.append('phone_number', state.phoneNumberValue)
+                    formData.append('bio', state.bioValue)
+                    formData.append('profile_picture', state.profilePictureValue)
+                }
 
 				try {
 					let url = `http://localhost:8000/api/profiles/${GlobalState.userId}/update/`
                     // This will be a patch request since the Profile already exists
 					const response = await Axios.patch(url, formData)
 					console.log(response.data)
-					// navigate('/listings')
+                    // To refresh the page
+					navigate(0)
 				}
 				catch(e) {
 					console.log(e.response)
@@ -129,6 +143,22 @@ function ProfileUpdate() {
         dispatch({type: 'changeSendRequest'})
     }
 
+    const ProfilePictureDisplay = () => {
+        if (typeof state.profilePictureValue !== 'string') {
+            return (
+                <Typography>
+                    {state.profilePictureValue ? <li>{state.profilePictureValue.name}</li> : ''}
+                </Typography>
+            )
+        }
+        else if (typeof state.profilePictureValue === 'string') {
+            return (
+                <Grid item sx={{ marginTop: '0.5rem', marginRight: 'auto', marginLeft: 'auto'}}>
+                    <img src={props.userProfile.profilePic} style={{ height: '5rem', width: '5rem'}}/>
+                </Grid>
+            )
+        }
+    }
     return (
     
     <>
@@ -189,6 +219,18 @@ function ProfileUpdate() {
                     />
                 </Grid>
 
+                <StyledPaper
+                    sx={{
+                    my: 1,
+                    mx: 'auto',
+                    p: 0,
+                    }}
+                >
+                    <Grid container>
+                        {ProfilePictureDisplay()}
+                    </Grid>
+                </StyledPaper>
+
                 <Grid item container xs={6} sx={{ 
 					marginTop: '1rem',
 					marginLeft: 'auto',
@@ -198,9 +240,9 @@ function ProfileUpdate() {
 						variant='outlined'
 						component='label'
 						fullWidth 
-						sx={{ 
-							fontSize: '0.8rem'
-						}}
+						// sx={{ 
+						// 	fontSize: '0.8rem'
+						// }}
 					>
 						Profile Picture
 						<input 

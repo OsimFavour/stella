@@ -82,7 +82,7 @@ function Header() {
                         backgroundColor: 'green'
                     },
                     }}
-                    onClick={() => navigate('/addproperty')}>
+                    onClick={() => navigate('/add_property')}>
                     Add Property</Button>
                     
                 {GlobalState.userIsLogged ? <Button sx={{

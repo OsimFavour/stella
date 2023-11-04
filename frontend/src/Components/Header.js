@@ -69,7 +69,7 @@ function Header() {
             </div>
             <div>
                 <Button color="inherit" sx={{marginRight: '2rem'}} onClick={() => navigate("/listings")}><Typography variant='h6'>Listings</Typography></Button>
-                <Button color="inherit" sx={{marginLeft: '2rem'}} onClick={() => navigate("/")}><Typography variant='h6'>Agencies</Typography></Button>
+                <Button color="inherit" sx={{marginLeft: '2rem'}} onClick={() => navigate("/agencies")}><Typography variant='h6'>Agencies</Typography></Button>
             </div>
             <div style={{marginLeft: 'auto', marginRight: '10rem'}}>
                 <Button sx={{

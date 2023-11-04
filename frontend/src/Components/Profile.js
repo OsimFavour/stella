@@ -50,12 +50,7 @@ function Profile() {
             profilePic: '',
             bio: '',
 		},
-        agencyNameValue: '',
-        phoneNumberValue: '',
-        bioValue: '',
-        uploadedPicture: [],
-        profilePictureValue: '',
-        sendRequest: 0
+        dataIsLoading: true,
     }
 
     function ReducerFunction(draft, action) {
@@ -66,21 +61,15 @@ function Profile() {
                 draft.userProfile.profilePic = action.profileObject.profile_picture
                 draft.userProfile.bio = action.profileObject.bio
                 break
+
+            case 'loadingDone':
+                draft.dataIsLoading = false
+                break
             
         }
     }
 
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
-
-    // Use Effect to catch uploaded picture.
-    useEffect(() => {
-        if (state.uploadedPicture[0]) {
-            dispatch({
-                type: 'catchProfilePictureChange',
-                profilePictureChosen: state.uploadedPicture[0]
-            })
-        }
-    }, [state.uploadedPicture[0]])
 
 
     // Request to Get Profile Info
@@ -96,6 +85,7 @@ function Profile() {
 					type: 'catchUserProfileInfo',
 					profileObject: response.data,
 				})
+                dispatch({type: 'loadingDone'})
 			}
 			catch(e) {
 				console.log(e.response)
@@ -134,30 +124,43 @@ function Profile() {
         }
         else {
             return (
-                        <StyledPaper
-                            sx={{
-                            my: 1,
-                            mx: 'auto',
-                            p: 2,
-                            }}
-                        >
-                            <Grid container wrap="nowrap" spacing={2}>
-                                <Grid item>
-                                    <Avatar>
-                                        <img 
-                                            style={{height: '2rem', width: '9rem'}} 
-                                            src={state.userProfile.profilePic}
-                                        />
-                                    </Avatar>
-                                </Grid>
-                                <Grid item xs>
-                                    <Typography>Welcome {GlobalState.userUsername}!</Typography>
-                                    <Typography variant='p'>You have X properties listed.</Typography>
-                                </Grid>
-                            </Grid>
-                        </StyledPaper>
+                <StyledPaper
+                    sx={{
+                    my: 1,
+                    mx: 'auto',
+                    p: 2,
+                    }}
+                >
+                    <Grid container wrap="nowrap" spacing={2}>
+                        <Grid item>
+                            <Avatar>
+                                <img 
+                                    style={{height: '2rem', width: '9rem'}} 
+                                    src={state.userProfile.profilePic}
+                                />
+                            </Avatar>
+                        </Grid>
+                        <Grid item xs>
+                            <Typography>Welcome {GlobalState.userUsername}!</Typography>
+                            <Typography variant='p'>You have X properties listed.</Typography>
+                        </Grid>
+                    </Grid>
+                </StyledPaper>
             )
         }
+    }
+
+    if (state.dataIsLoading === true) {
+        return (
+            <Grid 
+                container
+                justifyContent='center'
+                alignItems='center'
+                sx={{height: '100vh'}}
+            >
+                <CircularProgress />
+            </Grid>
+        )
     }
 
     return (
@@ -167,7 +170,7 @@ function Profile() {
             {WelcomeDisplay()}
         </div>
 
-       <ProfileUpdate/>
+       <ProfileUpdate userProfile={state.userProfile}/>
     </>
   )
 }

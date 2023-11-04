@@ -6,6 +6,9 @@ import Axios from 'axios'
 // Contexts
 import StateContext from '../Contexts/StateContext'
 
+// Assets
+import defaultProfilePicture from './Assets/defaultProfilePicture.jpg'
+
 // Components
 import ProfileUpdate from './ProfileUpdate'
 
@@ -136,7 +139,7 @@ function Profile() {
                             <Avatar>
                                 <img 
                                     style={{height: '2rem', width: '9rem'}} 
-                                    src={state.userProfile.profilePic}
+                                    src={state.userProfile.profilePic !== null ? state.userProfile.profilePic : defaultProfilePicture}
                                 />
                             </Avatar>
                         </Grid>

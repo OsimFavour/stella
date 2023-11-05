@@ -53,8 +53,8 @@ function Agencies() {
 
     function ReducerFunction(draft, action) {
         switch(action.type) {       
-            case '':
-                
+            case 'catchAgencies':
+                draft.agenciesList = action.agenciesArray
                 break
 
             case 'loadingDone':
@@ -66,18 +66,18 @@ function Agencies() {
 
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
 
-    // Request to Get Profile Info
+    // Request to Get All Profiles
     useEffect(() => {
-		async function GetProfileInfo() {
+		async function GetAgencies() {
 			try {
 				const response = await Axios.get(
-					`http://localhost:8000/api/profiles/${GlobalState.userId}/`
+					`http://localhost:8000/api/profiles/`
 				)
 				// console.log(response.data)
-				console.log('Dispatching catchUserProfileInfo action with data:', response.data)
+				console.log('Dispatching catchAgencies action with data:', response.data)
 				dispatch({
-					type: 'catchUserProfileInfo',
-					profileObject: response.data,
+					type: 'catchAgencies',
+					agenciesArray: response.data,
 				})
                 dispatch({type: 'loadingDone'})
 			}
@@ -85,11 +85,30 @@ function Agencies() {
 				console.log(e.response)
 			}
 		}  
-		GetProfileInfo()
+		GetAgencies()
 	}, [])
+
+    if (state.dataIsLoading === true) {
+        return (
+            <Grid 
+                container
+                justifyContent='center'
+                alignItems='center'
+                sx={{height: '100vh'}}
+            >
+                <CircularProgress />
+            </Grid>
+        )
+    }
     
     return (
-        <div>Agencies</div>
+        <div>
+            {state.agenciesList.map((agency) => {
+                if (agency.agency_name && agency.phone_number) {
+                    return <li>{agency.agency_name}</li>
+                }
+            })}
+        </div>
     )
 }
 

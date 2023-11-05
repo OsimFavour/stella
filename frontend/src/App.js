@@ -19,6 +19,7 @@ import ResponsiveAppBar from './Components/ResponsiveAppbar'
 import AddProperty from './Components/AddProperty'
 import Profile from './Components/Profile'
 import Agencies from './Components/Agencies'
+import New from './Components/New'
 
 // Contexts
 import DispatchContext from './Contexts/DispatchContext'
@@ -93,7 +94,7 @@ function App() {
           <Route path='/listings' element={<Listings/>}/>
           <Route path='/testing' element={<Testing/>}/>
           <Route path='/reducer' element={<ReducerTest/>}/>
-          {/* <Route path='/responsivebar' element={<ResponsiveAppBar/>}/> */}
+          <Route path='/new' element={<New/>}/>
         </Routes>
       </BrowserRouter>
       </StyledEngineProvider>

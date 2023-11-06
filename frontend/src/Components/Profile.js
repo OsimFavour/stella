@@ -52,6 +52,8 @@ function Profile() {
 			phoneNumber: '',
             profilePic: '',
             bio: '',
+            sellerId: '',
+            sellerListings: []
 		},
         dataIsLoading: true,
     }
@@ -63,6 +65,8 @@ function Profile() {
                 draft.userProfile.phoneNumber = action.profileObject.phone_number
                 draft.userProfile.profilePic = action.profileObject.profile_picture
                 draft.userProfile.bio = action.profileObject.bio
+                draft.userProfile.sellerId = action.profileObject.seller
+                draft.userProfile.sellerListings = action.profileObject.seller_listings
                 break
 
             case 'loadingDone':
@@ -96,6 +100,19 @@ function Profile() {
 		}  
 		GetProfileInfo()
 	}, [])
+
+
+    const PropertiesDisplay = () => {
+        if (state.userProfile.sellerListings.length === 0) {
+            return <Button disabled size="small" onClick={() => navigate(`/agencies/${state.userProfile.sellerId}`)}>You have No Property Listed</Button>
+        }
+        else if ( state.userProfile.sellerListings.length === 1) {
+            return <Button size="small" onClick={() => navigate(`/agencies/${state.userProfile.sellerId}`)}>You have 1 Property Listed</Button>
+        }
+        else {
+            return <Button size="small" onClick={() => navigate(`/agencies/${state.userProfile.sellerId}`)}>You have {state.userProfile.sellerListings.length} Properties Listed</Button>
+        }
+    }
 
 
     const WelcomeDisplay = () => {
@@ -144,8 +161,8 @@ function Profile() {
                             </Avatar>
                         </Grid>
                         <Grid item xs>
-                            <Typography>Welcome {GlobalState.userUsername}!</Typography>
-                            <Typography variant='p'>You have X properties listed.</Typography>
+                            <Typography ml={0.5}>Welcome {GlobalState.userUsername}!</Typography>
+                            <Typography variant='p' mr={4}>{PropertiesDisplay()}</Typography>
                         </Grid>
                     </Grid>
                 </StyledPaper>

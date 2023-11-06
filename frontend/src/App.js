@@ -19,6 +19,7 @@ import ResponsiveAppBar from './Components/ResponsiveAppbar'
 import AddProperty from './Components/AddProperty'
 import Profile from './Components/Profile'
 import Agencies from './Components/Agencies'
+import AgencyDetail from './Components/AgencyDetail'
 import New from './Components/New'
 
 // Contexts
@@ -85,12 +86,14 @@ function App() {
       {/* <Header/> */}
       <ResponsiveAppBar/>
         <Routes>
-          <Route path='/' element={<Home/>}/>
+          {/* <Route path='/' element={<Home/>}/> */}
+          <Route path='/' element={<New/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/register' element={<Register/>}/>
           <Route path='/add_property' element={<AddProperty/>}/>
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/agencies' element={<Agencies/>}/>
+          <Route path='/agencies/:id' element={<AgencyDetail/>}/>
           <Route path='/listings' element={<Listings/>}/>
           <Route path='/testing' element={<Testing/>}/>
           <Route path='/reducer' element={<ReducerTest/>}/>

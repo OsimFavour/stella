@@ -42,7 +42,7 @@ function App() {
               <Typography
                 variant="h2"
                 color="textPrimary"
-                style={{ fontWeight: "bold", marginBottom: "16px" }}
+                style={{ fontWeight: "bold", marginBottom: "16px", marginTop: '10px' }}
               >
                 Find Your Dream Home
               </Typography>

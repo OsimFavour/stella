@@ -20,7 +20,7 @@ import {
     Grid, 
     Typography, 
     Card, 
-    CardHeader, 
+    CardActions, 
     CardMedia, 
     CardContent,
     CircularProgress,
@@ -102,13 +102,46 @@ function Agencies() {
     }
     
     return (
-        <div>
+        <Grid container justifyContent='flex-start' spacing={2} sx={{ padding: '10px'}}>
             {state.agenciesList.map((agency) => {
+                const PropertiesDisplay = () => {
+                    if (agency.seller_listings.length === 0) {
+                        return <Button disabled size="small">No Property Listed</Button>
+                    }
+                    else if ( agency.seller_listings.length === 1) {
+                        return <Button size="small" onClick={() => navigate(`/agencies/${agency.seller}`)}>1 Property Listed</Button>
+                    }
+                    else {
+                        return <Button size="small" onClick={() => navigate(`/agencies/${agency.seller}`)}>{agency.seller_listings.length} Properties Listed</Button>
+                    }
+                }
+
                 if (agency.agency_name && agency.phone_number) {
-                    return <li>{agency.agency_name}</li>
+                    return (
+                        <Grid key={agency.id} item sx={{ marginTop: '1rem', maxWidth: '20rem' }}>
+                            <Card>
+                                <CardMedia
+                                    sx={{ height: 140 }}
+                                    image={agency.profile_picture ? agency.profile_picture : defaultProfilePicture}
+                                    title="Profile Picture"
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        {agency.agency_name}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {agency.bio.substring(0, 100)}...
+                                    </Typography>
+                                </CardContent>
+                                <CardActions>
+                                    {PropertiesDisplay()}
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                    )
                 }
             })}
-        </div>
+        </Grid>
     )
 }
 

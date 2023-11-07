@@ -31,6 +31,8 @@ import {
 } from '@mui/material'
 
 import { styled } from '@mui/material/styles'
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft'
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight'
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -93,6 +95,26 @@ function ListingDetail() {
 		GetListingInfo()
 	}, [])
 
+    const listingPictures = [
+        state.listingInfo.picture1,
+        state.listingInfo.picture2,
+        state.listingInfo.picture3,
+        state.listingInfo.picture4,
+        state.listingInfo.picture5,
+    ]
+
+    const [currentPicture, setCurrentPicture] = useState(0)
+
+    const PreviousPicture = () => {
+        if (currentPicture === 0) {
+            return setCurrentPicture(0)
+        }
+        else {
+            return setCurrentPicture(currentPicture - 1)
+        }
+    }
+    const NextPicture = () => setCurrentPicture(currentPicture + 1)
+
     if (state.dataIsLoading === true) {
         return (
             <Grid 
@@ -117,6 +139,20 @@ function ListingDetail() {
                     
                     <Typography color="text.primary">{state.listingInfo.title}</Typography>
                 </Breadcrumbs>
+            </Grid>
+
+            {/* IMAGE SLIDER */}
+            <Grid item>
+                {listingPictures.map((picture, index) => {
+                    return (
+                        <div key={index}>
+                            {index === currentPicture ? <img src={picture} style={{ width: '20rem', height: '20rem'}}/> : ''}
+                        </div>
+                    )
+                })}
+                <ArrowCircleLeftIcon onClick={PreviousPicture} />
+                <ArrowCircleRightIcon onClick={NextPicture}/>
+                {currentPicture}
             </Grid>
         </div>
     )

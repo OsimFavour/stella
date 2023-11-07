@@ -181,7 +181,7 @@ function Listings() {
                         component="img"
                         image={listing.picture1}
                         alt={listing.title}
-                        onClick={() => navigate(`listings/${listing.id}`)}
+                        onClick={() => navigate(`/listings/${listing.id}`)}
                     />
                     <CardContent>
                         <Typography variant="body2">
@@ -231,6 +231,7 @@ function Listings() {
             )
            })}
         </Grid>
+
         <Grid item xs={8} sx={{marginTop: '0.5rem'}}>
             <AppBar position='sticky'>
                 <div style={{height: '100vh'}}>
@@ -265,11 +266,11 @@ function Listings() {
                             ]}>
                                 <Popup>
                                     <Typography variant='h5'>{listing.title}</Typography>
-                                    <img src={listing.picture1} style={{height: '14rem', width: '18rem'}}/>
+                                    <img src={listing.picture1} style={{height: '14rem', width: '18rem', cursor: 'pointer'}} onClick={() => navigate(`/listings/${listing.id}`)}/>
                                     <Typography variant='body1'>
                                         {listing.description.substring(0, 150)}...
                                     </Typography>
-                                    <Button variant='contained' fullWidth>Details</Button>
+                                    <Button variant='contained' fullWidth onClick={() => navigate(`/listings/${listing.id}`)}>Details</Button>
                                 </Popup>
                             </Marker>
                         )

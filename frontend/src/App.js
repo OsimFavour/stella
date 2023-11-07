@@ -12,6 +12,7 @@ import Home from './Components/Home'
 import Header from './Components/Header'
 import Login from './Components/Login'
 import Listings from './Components/Listings'
+import ListingDetail from './Components/ListingDetail'
 import Testing from './Components/Testing'
 import Register from './Components/Register'
 import ReducerTest from './Components/ReducerTest'
@@ -95,6 +96,7 @@ function App() {
           <Route path='/agencies' element={<Agencies/>}/>
           <Route path='/agencies/:id' element={<AgencyDetail/>}/>
           <Route path='/listings' element={<Listings/>}/>
+          <Route path='/listings/:id' element={<ListingDetail/>}/>
           <Route path='/testing' element={<Testing/>}/>
           <Route path='/reducer' element={<ReducerTest/>}/>
           <Route path='/new' element={<New/>}/>

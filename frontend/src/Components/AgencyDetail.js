@@ -17,7 +17,7 @@ import {
     Grid, 
     Typography, 
     Card, 
-    CardHeader, 
+    CardActions, 
     CardMedia, 
     CardContent,
     CircularProgress,
@@ -140,9 +140,43 @@ function AgencyDetail() {
                                 <LocalPhoneIcon/> {state.userProfile.phoneNumber}
                             </IconButton>
                         </Typography>
+                        <Grid item style={{ marginTop: '1rem', padding: '5px'}}>
+                            {state.userProfile.bio}
+                        </Grid>
                     </Grid>
                 </Grid>
             </StyledPaper>
+
+            <Grid container justifyContent='flex-start' spacing={2} sx={{ padding: '10px'}}>
+                {state.userProfile.sellerListings.map((listing) => {
+                    return (
+                        <Grid key={listing.id} item sx={{ marginTop: '1rem', maxWidth: '20rem' }}>
+                            <Card>
+                                <CardMedia
+                                    sx={{ height: 140 }}
+                                    image={
+                                        `http://localhost:8000/${listing.picture1}` ? `http://localhost:8000/${listing.picture1}` : defaultProfilePicture}
+                                    title="Profile Picture"
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        {listing.title}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {listing.description.substring(0, 100)}...
+                                    </Typography>
+                                </CardContent>
+                                <CardActions>
+                                    {listing.property_status === 'Sale' ? 
+                                        `${listing.listing_type}: $${listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` : 
+                                        `${listing.listing_type}: $${listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}/${listing.rental_frequency}`}
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                    )
+                    
+                })}
+            </Grid>
         </div>
     )
 

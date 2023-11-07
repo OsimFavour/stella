@@ -153,10 +153,11 @@ function AgencyDetail() {
                         <Grid key={listing.id} item sx={{ marginTop: '1rem', maxWidth: '20rem' }}>
                             <Card>
                                 <CardMedia
-                                    sx={{ height: 140 }}
+                                    sx={{ height: 140, cursor: 'pointer' }}
                                     image={
                                         `http://localhost:8000/${listing.picture1}` ? `http://localhost:8000/${listing.picture1}` : defaultProfilePicture}
                                     title="Profile Picture"
+                                    onClick={() => navigate(`/listings/${listing.id}`)}
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">

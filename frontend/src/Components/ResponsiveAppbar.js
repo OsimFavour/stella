@@ -21,8 +21,8 @@ import {
   MenuItem 
 } from '@mui/material'
 
-const pages = ['Listings', 'Agencies', 'Add_Property', 'Login']
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
+const pages = ['listings', 'agencies', 'add_property', 'login']
+const settings = ['profile', 'account', 'dashboard', 'logout']
 
 function ResponsiveAppBar() {
   const navigate = useNavigate()

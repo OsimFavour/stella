@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import Axios from 'axios'
 import { useImmerReducer } from 'use-immer'
+import { useNavigate } from 'react-router-dom'
 
 // MUI
 import { 
@@ -40,6 +41,7 @@ function Listings() {
     // let url = 'http://localhost:8000/api/listings/'
     // fetch(url).then(response => response.json()).then(data => console.log(data))
 
+    const navigate = useNavigate()
     const houseIcon = new Icon({
         iconUrl: houseIconPng,
         iconSize: [40, 40]
@@ -143,6 +145,7 @@ function Listings() {
             {/* <Button onClick={GoEast}>Go East</Button> 
             <Button onClick={GoCenter}>Go Center</Button>*/}
            {allListings.map((listing) => {
+            console.log(`listings/${listing.id}`)
             return (
                 <Card key={listing.id} sx={{
                     margin: '0.5rem', 
@@ -168,13 +171,17 @@ function Listings() {
                         title={listing.title}
                     />
                     <CardMedia
-                        sx={{paddingRight: '1rem',
+                        sx={{
+                            paddingRight: '1rem',
                             paddingLeft: '1rem',
                             height: '20rem',
-                            width: '30rem'}}
+                            width: '30rem',
+                            cursor: 'pointer'
+                        }}
                         component="img"
                         image={listing.picture1}
                         alt={listing.title}
+                        onClick={() => navigate(`listings/${listing.id}`)}
                     />
                     <CardContent>
                         <Typography variant="body2">

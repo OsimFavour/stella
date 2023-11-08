@@ -101,19 +101,28 @@ function ListingDetail() {
         state.listingInfo.picture3,
         state.listingInfo.picture4,
         state.listingInfo.picture5,
-    ]
+    ].filter((picture) => picture !== null)
+    // The arrow function returns only pictures that are not NULL
 
     const [currentPicture, setCurrentPicture] = useState(0)
 
     const PreviousPicture = () => {
         if (currentPicture === 0) {
-            return setCurrentPicture(0)
+            return setCurrentPicture(listingPictures.length - 1)
         }
         else {
             return setCurrentPicture(currentPicture - 1)
         }
     }
-    const NextPicture = () => setCurrentPicture(currentPicture + 1)
+
+    const NextPicture = () => {
+        if (currentPicture === listingPictures.length - 1) {
+            return setCurrentPicture(0)
+        }
+        else {
+            return setCurrentPicture(currentPicture + 1)
+        }
+    }
 
     if (state.dataIsLoading === true) {
         return (
@@ -142,18 +151,20 @@ function ListingDetail() {
             </Grid>
 
             {/* IMAGE SLIDER */}
-            <Grid item>
-                {listingPictures.map((picture, index) => {
-                    return (
-                        <div key={index}>
-                            {index === currentPicture ? <img src={picture} style={{ width: '20rem', height: '20rem'}}/> : ''}
-                        </div>
-                    )
-                })}
-                <ArrowCircleLeftIcon onClick={PreviousPicture} />
-                <ArrowCircleRightIcon onClick={NextPicture}/>
-                {currentPicture}
-            </Grid>
+            {listingPictures.length > 0 ? (
+                <Grid item container justifyContent='center' sx={{position: 'relative', marginTop: '1rem'}}>
+                    {listingPictures.map((picture, index) => {
+                        return (
+                            <div key={index}>
+                                {index === currentPicture ? <img src={picture} style={{ width: '45rem', height: '35rem'}}/> : ''}
+                            </div>
+                        )
+                    })}
+                    <ArrowCircleLeftIcon onClick={PreviousPicture} sx={{ position: 'absolute', cursor: 'pointer', fontSize: '3rem', color: 'white', top: '50%', left: '27.5%', '&:hover': {backgroundColor: 'green'}}}/>
+                    <ArrowCircleRightIcon onClick={NextPicture} sx={{ position: 'absolute', cursor: 'pointer', fontSize: '3rem', color: 'white', top: '50%', right: '27.5%', '&:hover': {backgroundColor: 'green'}}}/>
+                    {currentPicture}
+                </Grid>
+            ) : ''}
         </div>
     )
 }

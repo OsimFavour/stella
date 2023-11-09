@@ -54,6 +54,7 @@ function ResponsiveAppBar() {
 
   const handleLogout = async () => {
     setAnchorElNav(null)
+    navigate('/')
     const confirmLogout = window.confirm('Are you sure you want to leave?')
     if (confirmLogout) {
         try {
@@ -95,7 +96,7 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            STELLA
+            STELL
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -221,8 +222,8 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                // <MenuItem key={setting} onClick={setting === 'Logout' ? handleLogout : (setting === 'Profile' ? handleProfile : handleCloseUserMenu)}>
-                <MenuItem key={setting} onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={setting === 'Logout' ? handleLogout : (setting === 'Profile' ? handleProfile : handleCloseUserMenu)}>
+                {/* <MenuItem key={setting} onClick={setting === 'Logout' ? handleLogout : handleCloseUserMenu}> */}
                   <Typography textAlign="center"><Button key={setting} onClick={() => navigate(`/${setting}`)}>{setting}</Button></Typography>
                 </MenuItem>
               ))}

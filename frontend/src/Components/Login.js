@@ -66,6 +66,7 @@ function Login() {
     }
 
 
+    // POST LOGIN DETAILS TO THE BACKEND
     useEffect(() => {
         if (state.sendRequest) {
             const source = Axios.CancelToken.source()

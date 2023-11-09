@@ -93,7 +93,7 @@ function Header() {
                     marginLeft: '1rem',
                     '&:hover': {
                         backgroundColor: 'green'
-                    },
+                    }, 
                     }}
                     onClick={handleClick}
                     // onClick={() => navigate("/login")}

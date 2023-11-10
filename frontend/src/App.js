@@ -85,8 +85,8 @@ function App() {
       <StyledEngineProvider injectFirst>
       <BrowserRouter>
       <CssBaseline />
-      <Header/>
-      <ResponsiveAppBar/>
+      {/* <Header/> */}
+      {/* <ResponsiveAppBar/> */}
       <Navbar/>
         <Routes>
           {/* <Route path='/' element={<Home/>}/> */}

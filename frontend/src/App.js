@@ -17,6 +17,7 @@ import Testing from './Components/Testing'
 import Register from './Components/Register'
 import ReducerTest from './Components/ReducerTest'
 import ResponsiveAppBar from './Components/ResponsiveAppbar'
+import Navbar from './Components/Navbar'
 import AddProperty from './Components/AddProperty'
 import Profile from './Components/Profile'
 import Agencies from './Components/Agencies'
@@ -86,12 +87,13 @@ function App() {
       <CssBaseline />
       <Header/>
       <ResponsiveAppBar/>
+      <Navbar/>
         <Routes>
           {/* <Route path='/' element={<Home/>}/> */}
           <Route path='/' element={<New/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/register' element={<Register/>}/>
-          <Route path='/add_property' element={<AddProperty/>}/>
+          <Route path='/add-property' element={<AddProperty/>}/>
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/agencies' element={<Agencies/>}/>
           <Route path='/agencies/:id' element={<AgencyDetail/>}/>

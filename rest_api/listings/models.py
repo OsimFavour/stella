@@ -62,5 +62,17 @@ class Listing(models.Model):
 
     def __str__(self):
         return self.title
+
     
+class PointOfInterest(models.Model):
+    name = models.CharField(max_length=120, blank=True, null=True)
+    choices_type = (
+        ('University', 'University'),
+        ('Hospital', 'Hospital'),
+        ('Stadium', 'Stadium'),
+    )
+    type = models.CharField(max_length=50, choices=choices_type)
+    location = models.PointField(srid=4326, blank=True, null=True)
     
+    def __str__(self):
+        return self.name

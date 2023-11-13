@@ -80,7 +80,7 @@ function AgencyDetail() {
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
 
 
-    // Request to Get Profile Info
+    // REQUEST TO GET PROFILE INFO
     useEffect(() => {
 		async function GetProfileInfo() {
 			try {

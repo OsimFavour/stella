@@ -12,6 +12,9 @@ import stadiumIconPng from './Assets/Mapicons/stadium.png'
 import hospitalIconPng from './Assets/Mapicons/hospital.png'
 import universityIconPng from './Assets/Mapicons/university.png'
 
+// Components
+import ListingUpdate from './ListingUpdate'
+
 // React Leaflet
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polygon } from 'react-leaflet'
 
@@ -386,8 +389,8 @@ function ListingDetail() {
                             <Button variant='text' color='primary' onClick={handleClickOpen}>Update</Button>
                             <Button variant='text' color='error' onClick={DeleteHandler}>Delete</Button>
 
-                            <Dialog open={open} onClose={handleClose}>
-                                
+                            <Dialog open={open} onClose={handleClose} fullScreen>
+                                <ListingUpdate listingData={state.listingInfo} closeDialog={handleClose} />
                             </Dialog>
                         </Grid>
                     ) : ''}

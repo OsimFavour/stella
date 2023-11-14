@@ -8,6 +8,9 @@ import StateContext from '../Contexts/StateContext'
 
 // Assets
 import defaultProfilePicture from './Assets/defaultProfilePicture.jpg'
+import stadiumIconPng from './Assets/Mapicons/stadium.png'
+import hospitalIconPng from './Assets/Mapicons/hospital.png'
+import universityIconPng from './Assets/Mapicons/university.png'
 
 // React Leaflet
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polygon } from 'react-leaflet'
@@ -31,9 +34,11 @@ import {
 	Checkbox,
     IconButton,
     Breadcrumbs,
-    Link
+    Link,
+    Dialog
 } from '@mui/material'
 
+import { Icon } from 'leaflet'
 import { styled } from '@mui/material/styles'
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft'
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight'
@@ -59,6 +64,21 @@ function ListingDetail() {
     // console.log(useParams())
 
     const params = useParams()
+
+    const stadiumIcon = new Icon({
+        iconUrl: stadiumIconPng,
+        iconSize: [40, 40]
+    })
+
+    const hospitalIcon = new Icon({
+        iconUrl: hospitalIconPng,
+        iconSize: [40, 40]
+    })
+
+    const universityIcon = new Icon({
+        iconUrl: universityIconPng,
+        iconSize: [40, 40]
+    })
 
     const initialState = {
         dataIsLoading: true,
@@ -144,6 +164,7 @@ function ListingDetail() {
 
     const [currentPicture, setCurrentPicture] = useState(0)
 
+    // FUNCTION TO VIEW PREVIOUS PICTURE
     const PreviousPicture = () => {
         if (currentPicture === 0) {
             return setCurrentPicture(listingPictures.length - 1)
@@ -153,6 +174,7 @@ function ListingDetail() {
         }
     }
 
+    // FUNCTION TO VIEW NEXT PICTURE
     const NextPicture = () => {
         if (currentPicture === listingPictures.length - 1) {
             return setCurrentPicture(0)
@@ -165,6 +187,37 @@ function ListingDetail() {
     const date = new Date(state.listingInfo.date_posted)
     const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
 
+    // HANDLER TO DELETE AGENT LISTING
+    const DeleteHandler = async () => {
+        const confirmDelete = window.confirm(
+            'Are you sure you want to delete thios listing?'
+        )
+        if (confirmDelete) {
+            try {
+                const response = await Axios.delete(
+                    `http://localhost:8000/api/listings/${params.id}/delete/`
+                )
+                console.log(response.data)
+                navigate('/listings')
+            }
+            catch(e) {
+                console.log(e.response.data) 
+            }
+        }
+    }
+
+    // OPEN FORM DIALOG FOR UPDATE
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        setOpen(false)
+    }
+
+    // LOAD DATA WHEN CONTENT IS YET TO COME
     if (state.dataIsLoading === true) {
         return (
             <Grid 
@@ -301,7 +354,7 @@ function ListingDetail() {
             ) : ''}
 
 
-            {/* SELLERS INFO */}
+            {/* SELLERS INFORMATION */}
 
             <StyledPaper
                 sx={{
@@ -327,21 +380,84 @@ function ListingDetail() {
                                 <LocalPhoneIcon/> {state.sellerProfileInfo.phone_number}
                             </IconButton>
                         </Typography>
-                        {/* <Grid item style={{ marginTop: '1rem', padding: '5px'}}>
-                            {state.sellerProfileInfo.bio}
-                        </Grid> */}
                     </Grid>
+                    {GlobalState.userId == state.listingInfo.seller ? (
+                        <Grid item container justifyContent='space-around'>
+                            <Button variant='text' color='primary' onClick={handleClickOpen}>Update</Button>
+                            <Button variant='text' color='error' onClick={DeleteHandler}>Delete</Button>
+
+                            <Dialog open={open} onClose={handleClose}>
+                                
+                            </Dialog>
+                        </Grid>
+                    ) : ''}
                 </Grid>
             </StyledPaper>
 
             {/* MAP */}
-            <Grid item container sx={{ marginTop: '4rem' }}>
-                <Grid item xs={3}>
-                    Points of Interests
+            <Grid item container spacing={1} justifyContent='space-between' sx={{ marginTop: '4rem' }}>
+
+                <Grid item xs={3} sx={{ overflow: 'auto', height: '35rem' }}>
+
+                    {state.listingInfo.listing_point_of_interests_within_10km.map((poi) => {
+
+                        const DegreeToRadian = (coordinate) => {
+                            return coordinate*Math.PI/180
+                        }
+
+                        const CalculateDistance = () => {
+                            const latitude1 = DegreeToRadian(state.listingInfo.latitude)
+                            const longitude1 = DegreeToRadian(state.listingInfo.longitude)
+
+                            const latitude2 = DegreeToRadian(poi.location.coordinates[0])
+                            const longitude2 = DegreeToRadian(poi.location.coordinates[1 ])
+
+                            // The formula
+                            const latDiff = latitude2 - latitude1;
+                            const lonDiff = longitude2 - longitude1;
+                            const R = 6371000 / 1000;
+
+                            const a =
+                                Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+                                Math.cos(latitude1) *
+                                    Math.cos(latitude2) *
+                                    Math.sin(lonDiff / 2) *
+                                    Math.sin(lonDiff / 2);
+                            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+                            const d = R * c;
+
+                            const dist =
+                                Math.acos(
+                                    Math.sin(latitude1) * Math.sin(latitude2) +
+                                        Math.cos(latitude1) *
+                                            Math.cos(latitude2) *
+                                            Math.cos(lonDiff)
+                                ) * R;
+                            return dist.toFixed(2);
+                        }
+                   
+                        return (
+                           <div key={poi.id} style={{ marginBottom: '0.5rem', border: '1px solid black' }}>
+                                <Typography variant='h6'>{poi.name}</Typography>
+                                <Typography variant='subtitle1'>
+                                    {poi.type} |{' '}
+                                    <span style={{ fontWeight: 'bolder', color: 'green' }}>
+                                        {CalculateDistance()} kilometers
+                                    </span>
+                                </Typography>
+                           </div>
+                        )
+                    })}
+
                 </Grid>
+
                 <Grid item xs={9} sx={{ height: '35rem' }}>
                     <MapContainer 
-						center={[51.505, -0.09]} 
+						center={[
+                            state.listingInfo.latitude,
+                            state.listingInfo.longitude,
+                        ]} 
 						zoom={14} 
 						scrollWheelZoom={true}
 					>
@@ -349,17 +465,44 @@ function ListingDetail() {
 							attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 							url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 						/>
-						<TheMapComponent/>
-						{BoroughDisplay()}
-
+						
 						<Marker
-							draggable
-							eventHandlers={eventHandlers}
-							position={state.markerPosition}
-							ref={markerRef}>
+							position={[
+                                state.listingInfo.latitude,
+                                state.listingInfo.longitude,
+                            ]}
+                        >
+                            <Popup>{state.listingInfo.title}</Popup>
 						</Marker>
-						{/* <Polygon positions={Camden}/> */}
+
+                        {state.listingInfo.listing_point_of_interests_within_10km.map((poi) => {
+                            const PoiIcon = () => {
+                                if (poi.type === 'Stadium') {
+                                    return stadiumIcon
+                                }
+                                else if (poi.type === 'Hospital') {
+                                    return hospitalIcon
+                                }
+                                else if (poi.type === 'University') {
+                                    return universityIcon
+                                }
+                            }
+                            return (
+                                <Marker 
+                                    key={poi.id} 
+                                    position={[
+                                        poi.location.coordinates[0], 
+                                        poi.location.coordinates[1],
+                                    ]}
+                                    icon={PoiIcon()}
+                                >
+                                    <Popup>{poi.name}</Popup>
+                                </Marker>
+                            )
+                        })}
+						
 					</MapContainer>
+
                 </Grid>
             </Grid>
 

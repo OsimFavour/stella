@@ -16,7 +16,8 @@ import {
     CardContent,
     CircularProgress,
     Paper,
-    TextField
+    TextField,
+    Snackbar
 } from '@mui/material'
 
 
@@ -35,7 +36,8 @@ function Login() {
     usernameValue: '',
     passwordValue: '',
     sendRequest: 0,
-    token: ''
+    token: '',
+    openSnack: false,
     }
 
     function ReducerFunction(draft, action) {
@@ -51,6 +53,9 @@ function Login() {
                 break
             case 'catchToken':
                 draft.token = action.tokenValue
+                break
+            case 'setSnack':
+                draft.openSnack = true
                 break
         }
     }
@@ -100,7 +105,7 @@ function Login() {
     }, [state.sendRequest])
 
 
-    // Get User Info
+    // GET USER INFO
     useEffect(() => {
         if (state.token !== '') {
             const source = Axios.CancelToken.source()
@@ -119,7 +124,10 @@ function Login() {
                         emailInfo: response.data.email,
                         IdInfo: response.data.id
                     })
-                    navigate('/')
+                    dispatch({
+                        type: 'setSnack'
+                    })
+                    // navigate('/')
                 }
                 catch (error) {
                     console.log(error.response)
@@ -129,6 +137,18 @@ function Login() {
             return () => {source.cancel()}
             }
     }, [state.token])
+
+
+    // CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
+    useEffect(() => {
+        if (state.openSnack){
+            // SET A TIMEOUT FOR 1.5 SECS AND DO A REDIRECT
+            setTimeout(() => {
+                navigate('/')
+            }, 1500)
+        }
+    }) 
+
 
     return (
     <div style={{ 
@@ -178,7 +198,9 @@ function Login() {
                     variant='contained' 
                     type='submit' 
                     fullWidth
-                >Sign In</Button>
+                >
+                    Sign In
+                </Button>
             </Grid>
        
         </form>
@@ -189,9 +211,18 @@ function Login() {
         
 
         <Grid item container justifyContent='center' sx={{ marginTop: '1rem' }}>
-                <Typography variant='small'>Don't Have An Accout? {' '}
+                <Typography variant='small'>Don't Have An Account? {' '}
                 <span onClick={() => navigate('/register')} style={{ cursor: 'pointer', color: ''}}>Sign Up</span></Typography>
         </Grid>
+
+        <Snackbar
+            open={state.openSnack}
+            message="You have successfully logged in"
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+            }}
+        />
     </div>
   )
 }

@@ -38,6 +38,7 @@ function Login() {
     sendRequest: 0,
     token: '',
     openSnack: false,
+    disabledBtn: false,
     }
 
     function ReducerFunction(draft, action) {
@@ -57,6 +58,13 @@ function Login() {
             case 'setSnack':
                 draft.openSnack = true
                 break
+            case 'disableButton':
+                draft.disabledBtn = true
+                break
+            case 'enableButton':
+                draft.disabledBtn = false
+                break
+        
         }
     }
 
@@ -68,6 +76,7 @@ function Login() {
         e.preventDefault()
         console.log('The form has been submitted')
         dispatch({type: 'changeSendRequest'})
+        dispatch({type: 'disableButton'})
     }
 
 
@@ -97,6 +106,7 @@ function Login() {
                 }
                 catch (error) {
                     console.log(error.response)
+                    dispatch({type: 'enableButton'})
                 }
             }
             SignIn()
@@ -193,11 +203,13 @@ function Login() {
                 marginTop: '1rem',
                 marginLeft: 'auto',
                 marginRight: 'auto',
-                fontSize: '1.1rem' }}>
+                fontSize: '1.1rem' }}
+            >
                 <Button 
                     variant='contained' 
                     type='submit' 
                     fullWidth
+                    disabled={state.disabledBtn}
                 >
                     Sign In
                 </Button>

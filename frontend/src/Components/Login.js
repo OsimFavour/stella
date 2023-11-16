@@ -152,12 +152,12 @@ function Login() {
     // CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
     useEffect(() => {
         if (state.openSnack){
-            // SET A TIMEOUT FOR 1.5 SECS AND DO A REDIRECT
+            // SET A TIMEOUT FOR 0.8 SEC AND DO A REDIRECT
             setTimeout(() => {
                 navigate('/')
-            }, 1500)
+            }, 800)
         }
-    }) 
+    }, [state.openSnack]) 
 
 
     return (

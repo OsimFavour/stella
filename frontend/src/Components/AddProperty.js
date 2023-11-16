@@ -58,6 +58,7 @@ import {
     TextField,
 	FormControlLabel,
 	Checkbox,
+	Snackbar
 } from '@mui/material'
 
 
@@ -312,7 +313,9 @@ function AddProperty() {
 		userProfile: {
 			agencyName: '',
 			phoneNumber: ''
-		}
+		},
+        // openSnack: false,
+        // disabledBtn: false,
     } 
 
     function ReducerFunction(draft, action) {
@@ -427,6 +430,17 @@ function AddProperty() {
 				draft.userProfile.agencyName = action.profileObject.agency_name
 				draft.userProfile.phoneNumber = action.profileObject.phone_number
 
+			// case 'setSnack':
+			// 	draft.openSnack = true
+			// 	break
+
+			// case 'disableButton':
+			// 	draft.disabledBtn = true
+			// 	break
+
+			// case 'enableButton':
+			// 	draft.disabledBtn = false
+			// 	break
         }
     }
 
@@ -854,7 +868,8 @@ function AddProperty() {
         console.log('The form has been submitted')
 		// Make Request when The Send Request is Incremented 
 		// i.e. when the submit button is clicked
-        dispatch({type: 'changeSendRequest'})
+        dispatch({ type: 'changeSendRequest' })
+        dispatch({ type: 'disableButton' })
     }
 
 	// SEND REQUESTS
@@ -890,16 +905,18 @@ function AddProperty() {
 				try {
 					let url = 'http://localhost:8000/api/listings/create'
 					const response = await Axios.post(url, formData)
-					console.log(response.data)
-					navigate('/listings')
+					console.log(`Property Created: ${response.data}`)
+					dispatch({ type: 'setSnack' })
 				}
 				catch(e) {
+					dispatch({ type: 'enableButton' })	
 					console.log(e.response)
 				}
 			}
 			AddProperty()
 		}
 	}, [state.sendRequest])
+
 
 	function PriceDisplay() {
 		if (state.propertyStatusValue === 'Rent' && state.rentalFrequencyValue === 'Day') {
@@ -929,7 +946,7 @@ function AddProperty() {
 			) {
 				console.log('First branch executed')
 			return (
-				<Button variant='contained' type='submit' fullWidth>Submit</Button>
+				<Button variant='contained' type='submit' fullWidth disabled={state.disabledBtn}>Submit</Button>
 			)
 		}
 		else if (
@@ -952,6 +969,16 @@ function AddProperty() {
 			)
 		}
 	}
+
+	// CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
+    useEffect(() => {
+        if (state.openSnack){
+            // SET A TIMEOUT FOR 0.8 SECS AND DO A REDIRECT
+            setTimeout(() => {
+                navigate('/listings')
+            }, 1500)
+        }
+    }, [state.openSnack]) 
 
 	return (
 		<div style={{ 
@@ -1340,9 +1367,19 @@ function AddProperty() {
 	 	   
 			</form>
 
-			<Button onClick={() => console.log(state.uploadedPict0ures)}>
+			{/* <Button onClick={() => console.log(state.uploadedPict0ures)}>
 				Test Button
-			</Button>
+
+			</Button> */}
+
+			<Snackbar
+				open={state.openSnack}
+				message="Property added successfully!"
+				anchorOrigin={{
+					vertical: 'top',
+					horizontal: 'center',
+				}}
+			/>
 
 			{/* <Button onClick={() => state.mapInstance.flyTo(
 				[51.5318314686333, -0.07821153682234076],

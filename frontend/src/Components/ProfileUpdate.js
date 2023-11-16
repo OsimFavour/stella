@@ -22,6 +22,7 @@ import {
     TextField,
 	FormControlLabel,
 	Checkbox,
+    Snackbar
 } from '@mui/material'
 
 import { styled } from '@mui/material/styles'
@@ -48,7 +49,10 @@ function ProfileUpdate(props) {
         bioValue: props.userProfile.bio,
         uploadedPicture: [],
         profilePictureValue: props.userProfile.profilePic,
-        sendRequest: 0
+        sendRequest: 0,
+        openSnack: false,
+        disabledBtn: false,
+        
     }
 
     function ReducerFunction(draft, action) {
@@ -76,6 +80,18 @@ function ProfileUpdate(props) {
 
             case 'changeSendRequest':
                 draft.sendRequest = draft.sendRequest + 1
+                break
+
+            case 'setSnack':
+                draft.openSnack = true
+                break
+
+            case 'disableButton':
+                draft.disabledBtn = true
+                break
+
+            case 'enableButton':
+                draft.disabledBtn = false
                 break
             
         }
@@ -123,21 +139,36 @@ function ProfileUpdate(props) {
                     // This will be a patch request since the Profile already exists
 					const response = await Axios.patch(url, formData)
 					console.log(response.data)
+                    dispatch({
+                        type: 'setSnack'
+                    })
                     // To refresh the page
-					navigate(0)
+					// navigate(0)
 				}
 				catch(e) {
 					console.log(e.response)
+                    dispatch({type: 'enableButton'})
 				}
 			}
 			UpdateProfile()
 		}
 	}, [state.sendRequest])
 
+    // CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
+    useEffect(() => {
+        if (state.openSnack){
+            // SET A TIMEOUT FOR 0.8 SEC AND DO A REDIRECT
+            setTimeout(() => {
+                navigate(0)
+            }, 500)
+        }
+    }, [state.openSnack]) 
+
     const FormSubmit = (e) => {
         e.preventDefault()
         console.log('The form has been submitted')
         dispatch({type: 'changeSendRequest'})
+        dispatch({type: 'disableButton'})
     }
 
     const ProfilePictureDisplay = () => {
@@ -283,6 +314,7 @@ function ProfileUpdate(props) {
                         variant='contained' 
                         type='submit' 
                         fullWidth
+                        disabled={state.disabledBtn}
                     >Update</Button>
                 </Grid>
         
@@ -291,6 +323,14 @@ function ProfileUpdate(props) {
             {/* {GlobalState.globalMessage} */}
 
             {/* {GlobalState.userToken} */}
+            <Snackbar
+                open={state.openSnack}
+                message="You have successfully updated your profile!"
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            />
         
         </div>
     </>

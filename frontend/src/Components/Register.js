@@ -14,7 +14,8 @@ import {
     CardMedia, 
     CardContent,
     CircularProgress,
-    TextField
+    TextField,
+    Snackbar
 } from '@mui/material'
 
 
@@ -26,7 +27,10 @@ function Register() {
         emailValue: '',
         passwordValue: '',
         password2Value: '',
-        sendRequest: 0
+        sendRequest: 0,
+        openSnack: false,
+        disabledBtn: false,
+        
     }
 
     function ReducerFunction(draft, action) {
@@ -45,6 +49,15 @@ function Register() {
                 break
             case 'changeSendRequest':
                 draft.sendRequest = draft.sendRequest + 1
+                break
+            case 'setSnack':
+                draft.openSnack = true
+                break
+            case 'disableButton':
+                draft.disabledBtn = true
+                break
+            case 'enableButton':
+                draft.disabledBtn = false
                 break
         }
     }
@@ -66,6 +79,7 @@ function Register() {
         e.preventDefault()
         console.log('The form has been submitted')
         dispatch({type: 'changeSendRequest'})
+        dispatch({type: 'disableButton'})
     }
 
     useEffect(() => {
@@ -82,16 +96,30 @@ function Register() {
                     }, 
                     { cancelToken: source.token })
                     console.log(response)
-                    navigate('/')
+                    dispatch({
+                        type: 'setSnack'
+                    })
                 }
                 catch (error) {
                     console.log(error.response)
+                    dispatch({type: 'enableButton'})
                 }
             }
             SignUp()
             return () => {source.cancel()}
             }
     }, [state.sendRequest])
+
+
+    // CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
+    useEffect(() => {
+        if (state.openSnack){
+            // SET A TIMEOUT FOR 1.5 SECS AND DO A REDIRECT
+            setTimeout(() => {
+                navigate('/')
+            }, 1500)
+        }
+    }, [state.openSnack]) 
 
     return (
     <div style={{ 
@@ -151,7 +179,7 @@ function Register() {
                 marginLeft: 'auto',
                 marginRight: 'auto',
                 fontSize: '1.1rem' }}>
-                <Button variant='contained' type='submit' fullWidth>Sign Up</Button>
+                <Button variant='contained' type='submit' fullWidth disabled={state.disabledBtn}>Sign Up</Button>
             </Grid>
        
         </form>
@@ -160,6 +188,15 @@ function Register() {
                 <Typography variant='small'>Already Have An Account? {' '}
                 <span onClick={() => navigate('/login')} style={{ cursor: 'pointer', color: ''}}>Sign In Here</span></Typography>
         </Grid>
+
+        <Snackbar
+            open={state.openSnack}
+            message="You have successfully created an account!"
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+            }}
+        />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import Axios from 'axios'
 import MenuIcon from '@mui/icons-material/Menu'
 import AdbIcon from '@mui/icons-material/Adb'
@@ -18,7 +18,8 @@ import {
   Avatar, 
   Button, 
   Tooltip, 
-  MenuItem 
+  MenuItem,
+  Snackbar
 } from '@mui/material'
 
 const pages = ['listings', 'agencies', 'add_property', 'login']
@@ -52,6 +53,8 @@ function ResponsiveAppBar() {
     navigate('/profile')
   }
 
+  const [openSnack, setOpenSnack] = useState(false)
+
   const handleLogout = async () => {
     setAnchorElNav(null)
     navigate('/')
@@ -66,7 +69,8 @@ function ResponsiveAppBar() {
             )
             console.log(response)
             GlobalDispatch({type: 'logout'})
-            navigate('/')
+            setOpenSnack(true)
+            // navigate('/')
         }
         catch(e) {
 
@@ -74,6 +78,16 @@ function ResponsiveAppBar() {
         }
     }
   }
+
+  // CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
+  useEffect(() => {
+    if (openSnack){
+      // SET A TIMEOUT FOR 0.8 SEC AND DO A REDIRECT
+      setTimeout(() => {
+          navigate('/')
+      }, 800)
+    }
+  }, [openSnack]) 
   
 
   return (
@@ -228,6 +242,15 @@ function ResponsiveAppBar() {
                 </MenuItem>
               ))}
             </Menu>
+
+            <Snackbar
+                open={openSnack}
+                message="You have successfully logged out"
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            />
           </Box>
         </Toolbar>
       </Container>

@@ -1,9 +1,9 @@
 import Axios from 'axios'
-import React, {useContext} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 // MUI Imports
-import { Button, Typography, Grid, AppBar, Toolbar, IconButton, Menu, MenuItem } from '@mui/material'
+import { Button, Typography, Grid, AppBar, Toolbar, IconButton, Menu, MenuItem, Snackbar } from '@mui/material'
 
 // Contexts
 import StateContext from '../Contexts/StateContext'
@@ -29,6 +29,8 @@ function Header() {
         navigate('/profile')
     }
 
+    const [openSnack, setOpenSnack] = useState(false)
+
     
     const handleLogout = async () => {
         setAnchorEl(null)
@@ -43,7 +45,8 @@ function Header() {
                 )
                 console.log(response)
                 GlobalDispatch({type: 'logout'})
-                navigate('/')
+                setOpenSnack(true)
+                // navigate('/')
             }
             catch(e) {
     
@@ -51,6 +54,16 @@ function Header() {
             }
         }
     }
+
+    // CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
+    useEffect(() => {
+        if (openSnack){
+            // SET A TIMEOUT FOR 0.8 SEC AND DO A REDIRECT
+            setTimeout(() => {
+                navigate('/')
+            }, 800)
+        }
+    }, [openSnack]) 
 
     return (
     <AppBar position="static" sx={{backgroundColor:'black'}}>
@@ -125,6 +138,15 @@ function Header() {
                         <MenuItem onClick={handleClose}>My account</MenuItem>
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </Menu>
+
+                    <Snackbar
+                        open={openSnack}
+                        message="You have successfully logged out"
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center',
+                        }}
+                    />
                 
             </div>
             

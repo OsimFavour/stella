@@ -38,7 +38,8 @@ import {
     IconButton,
     Breadcrumbs,
     Link,
-    Dialog
+    Dialog,
+    Snackbar
 } from '@mui/material'
 
 import { Icon } from 'leaflet'
@@ -86,7 +87,10 @@ function ListingDetail() {
     const initialState = {
         dataIsLoading: true,
         listingInfo: '',
-        sellerProfileInfo: ''
+        sellerProfileInfo: '',
+        openSnack: false,
+        disabledBtn: false,
+        
     }
 
     function ReducerFunction(draft, action) {
@@ -102,6 +106,19 @@ function ListingDetail() {
             case 'catchSellerProfileInfo':
                 draft.sellerProfileInfo = action.profileObject
                 break
+            
+            case 'setSnack':
+                draft.openSnack = true
+                break
+
+            case 'disableButton':
+                draft.disabledBtn = true
+                break
+
+            case 'enableButton':
+                draft.disabledBtn = false
+                break
+            
             
         }
     }
@@ -201,13 +218,28 @@ function ListingDetail() {
                     `http://localhost:8000/api/listings/${params.id}/delete/`
                 )
                 console.log(response.data)
-                navigate('/listings')
+                dispatch({
+                    type: 'setSnack'
+                })
+                dispatch({type: 'disableButton'})
+                // navigate('/listings')
             }
             catch(e) {
+                dispatch({type: 'enableButton'})
                 console.log(e.response.data) 
             }
         }
     }
+
+    // CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
+    useEffect(() => {
+        if (state.openSnack){
+            // SET A TIMEOUT FOR 0.8 SEC AND DO A REDIRECT
+            setTimeout(() => {
+                navigate('/listings')
+            }, 700)
+        }
+    }, [state.openSnack]) 
 
     // OPEN FORM DIALOG FOR UPDATE
     const [open, setOpen] = React.useState(false);
@@ -387,7 +419,7 @@ function ListingDetail() {
                     {GlobalState.userId == state.listingInfo.seller ? (
                         <Grid item container justifyContent='space-around'>
                             <Button variant='text' color='primary' onClick={handleClickOpen}>Update</Button>
-                            <Button variant='text' color='error' onClick={DeleteHandler}>Delete</Button>
+                            <Button variant='text' color='error' onClick={DeleteHandler} disabled={state.disabledBtn}>Delete</Button>
 
                             <Dialog open={open} onClose={handleClose} fullScreen>
                                 <ListingUpdate listingData={state.listingInfo} closeDialog={handleClose} />
@@ -508,6 +540,14 @@ function ListingDetail() {
 
                 </Grid>
             </Grid>
+            <Snackbar
+                open={state.openSnack}
+                message="Property Deleted Successfully!"
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            />
 
         </div>
     )

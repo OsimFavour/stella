@@ -314,8 +314,8 @@ function AddProperty() {
 			agencyName: '',
 			phoneNumber: ''
 		},
-        // openSnack: false,
-        // disabledBtn: false,
+        openSnack: false,
+        disabledBtn: false,
     } 
 
     function ReducerFunction(draft, action) {
@@ -430,17 +430,17 @@ function AddProperty() {
 				draft.userProfile.agencyName = action.profileObject.agency_name
 				draft.userProfile.phoneNumber = action.profileObject.phone_number
 
-			// case 'setSnack':
-			// 	draft.openSnack = true
-			// 	break
+			case 'setSnack':
+				draft.openSnack = false
+				break
 
-			// case 'disableButton':
-			// 	draft.disabledBtn = true
-			// 	break
+			case 'disableButton':
+				draft.disabledBtn = true
+				break
 
-			// case 'enableButton':
-			// 	draft.disabledBtn = false
-			// 	break
+			case 'enableButton':
+				draft.disabledBtn = false
+				break
         }
     }
 
@@ -905,8 +905,9 @@ function AddProperty() {
 				try {
 					let url = 'http://localhost:8000/api/listings/create'
 					const response = await Axios.post(url, formData)
-					console.log(`Property Created: ${response.data}`)
 					dispatch({ type: 'setSnack' })
+					navigate('/listings')
+					console.log(`Property Created: ${response.data}`)
 				}
 				catch(e) {
 					dispatch({ type: 'enableButton' })	
@@ -946,7 +947,14 @@ function AddProperty() {
 			) {
 				console.log('First branch executed')
 			return (
-				<Button variant='contained' type='submit' fullWidth disabled={state.disabledBtn}>Submit</Button>
+				<Button 
+					variant='contained' 
+					type='submit' 
+					fullWidth 
+					disabled={state.disabledBtn}
+				>
+					Submit
+				</Button>
 			)
 		}
 		else if (
@@ -972,7 +980,9 @@ function AddProperty() {
 
 	// CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
     useEffect(() => {
+		console.log(`Open Snack is currently: ${state.openSnack}`)
         if (state.openSnack){
+			console.log(`Open Snack changed to: ${state.openSnack}`)
             // SET A TIMEOUT FOR 0.8 SECS AND DO A REDIRECT
             setTimeout(() => {
                 navigate('/listings')
@@ -1376,7 +1386,7 @@ function AddProperty() {
 				open={state.openSnack}
 				message="Property added successfully!"
 				anchorOrigin={{
-					vertical: 'top',
+					vertical: 'bottom',
 					horizontal: 'center',
 				}}
 			/>

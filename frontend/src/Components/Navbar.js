@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import Axios from 'axios'
 import MenuIcon from '@mui/icons-material/Menu'
 import AdbIcon from '@mui/icons-material/Adb'
@@ -18,7 +18,8 @@ import {
   Avatar, 
   Button, 
   Tooltip, 
-  MenuItem 
+  MenuItem,
+  Snackbar
 } from '@mui/material'
 
 
@@ -51,6 +52,8 @@ function Navbar() {
     navigate('/profile')
   }
 
+  const [openSnack, setOpenSnack] = useState(false)
+
   const handleLogout = async () => {
     setAnchorElNav(null)
     const confirmLogout = window.confirm('Are you sure you want to leave?')
@@ -64,7 +67,8 @@ function Navbar() {
         )
         console.log(response)
         GlobalDispatch({type: 'logout'})
-        navigate('/')
+        setOpenSnack(true)
+        // navigate('/')
       }
       catch(e) {
 
@@ -72,6 +76,16 @@ function Navbar() {
       }
     }
   }
+
+  // CREATE A NEW USE EFFECT TO WATCH FOR CHANGES IN OPEN SNACK
+  useEffect(() => {
+    if (openSnack){
+        // SET A TIMEOUT FOR 0.8 SEC AND DO A REDIRECT
+        setTimeout(() => {
+            navigate(0)
+        }, 800)
+    }
+  }, [openSnack]) 
   
 
   return (
@@ -286,10 +300,19 @@ function Navbar() {
               </MenuItem>
 
               <MenuItem onClick={handleLogout}>
-                <Typography textAlign="center"><Button onClick={() => navigate('/logout')}>Logout</Button></Typography>
+                <Typography textAlign="center"><Button>Logout</Button></Typography>
               </MenuItem>
 
             </Menu>
+
+            <Snackbar
+                open={openSnack}
+                message="You have successfully logged out"
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            />
           </Box>
         </Toolbar>
       </Container>

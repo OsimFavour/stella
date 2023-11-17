@@ -17,7 +17,8 @@ import {
     CircularProgress,
     Paper,
     TextField,
-    Snackbar
+    Snackbar,
+    Alert
 } from '@mui/material'
 
 
@@ -39,15 +40,18 @@ function Login() {
     token: '',
     openSnack: false,
     disabledBtn: false,
+    serverError: false
     }
 
     function ReducerFunction(draft, action) {
         switch(action.type) {
             case 'catchUsernameChange':
                 draft.usernameValue = action.usernameChosen
+                draft.serverError = false
                 break
             case 'catchPasswordChange':
                 draft.passwordValue = action.passwordChosen
+                draft.serverError = false
                 break
             case 'changeSendRequest':
                 draft.sendRequest = draft.sendRequest + 1
@@ -64,7 +68,9 @@ function Login() {
             case 'enableButton':
                 draft.disabledBtn = false
                 break
-        
+            case 'catchServerError':
+                draft.serverError = true
+                break
         }
     }
 
@@ -107,6 +113,7 @@ function Login() {
                 catch (error) {
                     console.log(error.response)
                     dispatch({type: 'enableButton'})
+                    dispatch({type: 'catchServerError'})
                 }
             }
             SignIn()
@@ -171,6 +178,12 @@ function Login() {
                 <Typography variant='h4'>Sign In Here</Typography>
             </Grid>
 
+            {state.serverError ? (
+                <Alert severity="error">
+                    Unable to log in with provided credentials. Please try again!
+                </Alert>
+            ) : ''}
+
             <Grid item container sx={{ marginTop: '1rem' }}>
                 <TextField 
                     id="username" 
@@ -183,6 +196,7 @@ function Login() {
                             type: 'catchUsernameChange', 
                             usernameChosen: e.target.value
                             })}
+                    error={state.serverError ? true : false}
                 />
             </Grid>
             <Grid item container sx={{ marginTop: '1rem' }}>
@@ -197,7 +211,9 @@ function Login() {
                         dispatch({
                             type: 'catchPasswordChange', 
                             passwordChosen: e.target.value
-                            })}/>
+                            })}
+                    error={state.serverError ? true : false}
+                />
             </Grid>
             <Grid item container xs={8} sx={{ 
                 marginTop: '1rem',

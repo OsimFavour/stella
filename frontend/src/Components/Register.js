@@ -46,6 +46,9 @@ function Register() {
         password2HelperText: '',
         serverUserMessage: '',
         serverEmailMessage: '',
+        serverSimilarPasswordMessage: '',
+        serverCommonPasswordMessage: '',
+        serverNumericPasswordMessage: '',
     }
 
 
@@ -69,6 +72,10 @@ function Register() {
                 draft.passwordValue = action.passwordChosen
                 draft.passwordErrors.hasErrors = false
                 draft.passwordErrors.errorMessage = ''
+
+                draft.serverSimilarPasswordMessage = ''
+                draft.serverCommonPasswordMessage = ''
+                draft.serverNumericPasswordMessage = ''
                 break
 
             case 'catchPassword2Change':
@@ -138,6 +145,18 @@ function Register() {
                 draft.serverEmailMessage = 'A user with that email already exists!'
                 break
 
+            case 'similarPassword':
+                draft.serverSimilarPasswordMessage = 'The password is too similar to the username.'
+                break
+
+            case 'commonPassword':
+                draft.serverCommonPasswordMessage = 'This password is too common.'
+                break
+
+            case 'numericPassword':
+                draft.serverNumericPasswordMessage = 'This password is entirely numeric.'
+                break
+
         }
     }
 
@@ -187,6 +206,15 @@ function Register() {
                     else if (error.response.data.email){
                         dispatch({type: 'emailExists'})
                     }
+                    else if (error.response.data.password[0] === 'The password is too similar to the username.'){
+                        dispatch({type: 'similarPassword'})
+                    }
+                    else if (error.response.data.password[0] === 'This password is too common.'){
+                        dispatch({type: 'commonPassword'})
+                    }
+                    else if (error.response.data.password[0] === 'This password is entirely numeric.'){
+                        dispatch({type: 'numericPassword'})
+                    }
                 }
             }
             SignUp()
@@ -227,6 +255,25 @@ function Register() {
                     {state.serverEmailMessage}
                 </Alert>
             ) : ''}
+
+            {state.serverSimilarPasswordMessage ? (
+                <Alert severity="error">
+                    {state.serverSimilarPasswordMessage}
+                </Alert>
+            ) : ''}
+
+            {state.serverCommonPasswordMessage ? (
+                <Alert severity="error">
+                    {state.serverCommonPasswordMessage}
+                </Alert>
+            ) : ''}
+
+            {state.serverNumericPasswordMessage ? (
+                <Alert severity="error">
+                    {state.serverNumericPasswordMessage}
+                </Alert>
+            ) : ''}
+
             
             <Grid item container sx={{ marginTop: '1rem' }}>
                 <TextField 

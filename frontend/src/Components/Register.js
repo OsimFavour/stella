@@ -43,7 +43,9 @@ function Register() {
             hasErrors: false,
             errorMessage: '',
         },
+        password2HelperText: '',
     }
+
 
     function ReducerFunction(draft, action) {
         switch(action.type) {
@@ -67,6 +69,12 @@ function Register() {
 
             case 'catchPassword2Change':
                 draft.password2Value = action.password2Chosen
+                if (action.password2Chosen != draft.passwordValue){
+                    draft.password2HelperText = "The two password fields didn't match."
+                }
+                else if (action.password2Chosen === draft.passwordValue){
+                    draft.password2HelperText = ''
+                }
                 break
 
             case 'changeSendRequest':
@@ -112,6 +120,10 @@ function Register() {
                     draft.passwordErrors.hasErrors = true
                     draft.passwordErrors.errorMessage = 'The password must have at least 8 characters!'
                 }
+                else if (!/^(?=.*[0-9!@#$%^&*()-_=+{};:'",.<>/?`~])[\w!@#$%^&*()-_=+{};:'",.<>/?`~]{8,}$/.test(action.passwordChosen)){
+                    draft.passwordErrors.hasErrors = true
+                    draft.passwordErrors.errorMessage = 'The password must have at least 1 special character or a number!'
+                }
                 break
         }
     }
@@ -132,8 +144,14 @@ function Register() {
     function formSubmit(e) {
         e.preventDefault()
         console.log('The form has been submitted')
-        dispatch({type: 'changeSendRequest'})
-        dispatch({type: 'disableButton'})
+        if (!state.usernameErrors.hasErrors && 
+            !state.emailErrors.hasErrors && 
+            !state.password.hasErrors && 
+            state.password2HelperText === ''
+            ){
+            dispatch({type: 'changeSendRequest'})
+            dispatch({type: 'disableButton'})
+        }
     }
 
     useEffect(() => {
@@ -267,7 +285,15 @@ function Register() {
                     type='password' 
                     fullWidth
                     value={state.password2Value}
-                    onChange={(e) => dispatch({type: 'catchPassword2Change', password2Chosen: e.target.value})}/>
+                    onChange={(e) => 
+                        dispatch({
+                            type: 'catchPassword2Change', 
+                            password2Chosen: e.target.value
+                        })
+                    }
+                    error={state.password2HelperText !== '' ? true : false}
+                    helperText={state.password2HelperText}
+                />
             </Grid>
 
             <Grid item container xs={8} sx={{ 

@@ -15,7 +15,8 @@ import {
     CardContent,
     CircularProgress,
     TextField,
-    Snackbar
+    Snackbar,
+    Alert
 } from '@mui/material'
 
 
@@ -30,34 +31,87 @@ function Register() {
         sendRequest: 0,
         openSnack: false,
         disabledBtn: false,
-        
+        usernameErrors: {
+            hasErrors: false,
+            errorMessage: '',
+        },
+        emailErrors: {
+            hasErrors: false,
+            errorMessage: '',
+        },
+        passwordErrors: {
+            hasErrors: false,
+            errorMessage: '',
+        },
     }
 
     function ReducerFunction(draft, action) {
         switch(action.type) {
             case 'catchUsernameChange':
                 draft.usernameValue = action.usernameChosen
-                break        
+                draft.usernameErrors.hasErrors = false
+                draft.usernameErrors.errorMessage = ''
+                break   
+
             case 'catchEmailChange':
                 draft.emailValue = action.emailChosen
+                draft.emailErrors.hasErrors = false
+                draft.emailErrors.errorMessage = ''
                 break
+
             case 'catchPasswordChange':
                 draft.passwordValue = action.passwordChosen
+                draft.passwordErrors.hasErrors = false
+                draft.passwordErrors.errorMessage = ''
                 break
+
             case 'catchPassword2Change':
                 draft.password2Value = action.password2Chosen
                 break
+
             case 'changeSendRequest':
                 draft.sendRequest = draft.sendRequest + 1
                 break
+
             case 'setSnack':
                 draft.openSnack = true
                 break
+
             case 'disableButton':
                 draft.disabledBtn = true
                 break
+
             case 'enableButton':
                 draft.disabledBtn = false
+                break
+
+            case 'catchUsernameErrors':
+                if (action.usernameChosen.length === 0){
+                    draft.usernameErrors.hasErrors = true
+                    draft.usernameErrors.errorMessage = 'This field must not be blank.'
+                }
+                else if (action.usernameChosen.length < 5){
+                    draft.usernameErrors.hasErrors = true
+                    draft.usernameErrors.errorMessage = 'Username must have at least five characters.'
+                }
+                else if (!/^([a-zA-Z0-9]+)$/.test(action.usernameChosen)){
+                    draft.usernameErrors.hasErrors = true
+                    draft.usernameErrors.errorMessage = 'Enter a valid username. This value may contain only letters and numbers.'
+                }
+                break
+
+            case 'catchEmailErrors':
+                if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(action.emailChosen)){
+                    draft.emailErrors.hasErrors = true
+                    draft.emailErrors.errorMessage = 'Enter a valid email address.'
+                }
+                break
+            
+            case 'catchPasswordErrors':
+                if (action.passwordChosen.length < 8){
+                    draft.passwordErrors.hasErrors = true
+                    draft.passwordErrors.errorMessage = 'The password must have at least 8 characters!'
+                }
                 break
         }
     }
@@ -139,7 +193,21 @@ function Register() {
                     variant="outlined" 
                     fullWidth
                     value={state.usernameValue}
-                    onChange={(e) => dispatch({type: 'catchUsernameChange', usernameChosen: e.target.value})}/>
+                    onChange={(e) => 
+                        dispatch({
+                            type: 'catchUsernameChange', 
+                            usernameChosen: e.target.value
+                        })
+                    }
+                    onBlur={(e) => 
+                        dispatch({
+                            type: 'catchUsernameErrors', 
+                            usernameChosen: e.target.value
+                        })
+                    }
+                    error={state.usernameErrors.hasErrors ? true : false}
+                    helperText={state.usernameErrors.errorMessage}
+                />
             </Grid>
 
             <Grid item container sx={{ marginTop: '1rem' }}>
@@ -149,7 +217,21 @@ function Register() {
                     variant="outlined" 
                     fullWidth 
                     value={state.emailValue} 
-                    onChange={(e) => dispatch({type: 'catchEmailChange', emailChosen: e.target.value})}/>
+                    onChange={(e) => 
+                        dispatch({
+                            type: 'catchEmailChange', 
+                            emailChosen: e.target.value
+                        })
+                    }
+                    onBlur={(e) => 
+                        dispatch({
+                            type: 'catchEmailErrors', 
+                            emailChosen: e.target.value
+                        })
+                    }
+                    error={state.emailErrors.hasErrors ? true : false}
+                    helperText={state.emailErrors.errorMessage}
+                />
             </Grid>
 
             <Grid item container sx={{ marginTop: '1rem' }}>
@@ -160,7 +242,21 @@ function Register() {
                     type='password' 
                     fullWidth
                     value={state.passwordValue}
-                    onChange={(e) => dispatch({type: 'catchPasswordChange', passwordChosen: e.target.value})}/>
+                    onChange={(e) => 
+                        dispatch({
+                            type: 'catchPasswordChange', 
+                            passwordChosen: e.target.value
+                        })
+                    }
+                    onBlur={(e) => 
+                        dispatch({
+                            type: 'catchPasswordErrors', 
+                            passwordChosen: e.target.value
+                        })
+                    }
+                    error={state.passwordErrors.hasErrors ? true : false}
+                    helperText={state.passwordErrors.errorMessage}
+                />
             </Grid>                
 
             <Grid item container sx={{ marginTop: '1rem' }}>

@@ -44,6 +44,8 @@ function Register() {
             errorMessage: '',
         },
         password2HelperText: '',
+        serverUserMessage: '',
+        serverEmailMessage: '',
     }
 
 
@@ -53,12 +55,14 @@ function Register() {
                 draft.usernameValue = action.usernameChosen
                 draft.usernameErrors.hasErrors = false
                 draft.usernameErrors.errorMessage = ''
+                draft.serverUserMessage = ''
                 break   
 
             case 'catchEmailChange':
                 draft.emailValue = action.emailChosen
                 draft.emailErrors.hasErrors = false
                 draft.emailErrors.errorMessage = ''
+                draft.serverEmailMessage = ''
                 break
 
             case 'catchPasswordChange':
@@ -70,7 +74,7 @@ function Register() {
             case 'catchPassword2Change':
                 draft.password2Value = action.password2Chosen
                 if (action.password2Chosen != draft.passwordValue){
-                    draft.password2HelperText = "The two password fields didn't match."
+                    draft.password2HelperText = "The two password fields must match."
                 }
                 else if (action.password2Chosen === draft.passwordValue){
                     draft.password2HelperText = ''
@@ -125,17 +129,19 @@ function Register() {
                     draft.passwordErrors.errorMessage = 'The password must have at least 1 special character or a number!'
                 }
                 break
+            
+            case 'usernameExists':
+                draft.serverUserMessage = 'A user with that username already exists!'
+                break
+
+            case 'emailExists':
+                draft.serverEmailMessage = 'A user with that email already exists!'
+                break
+
         }
     }
 
-    // const [state, dispatch] = useReducer(ReducerFunction, initialState)
     const [state, dispatch] = useImmerReducer(ReducerFunction, initialState)
-
-    // const [sendRequest, setSendRequest] = useState(false)
-    // const [usernameValue, setUsernameValue] = useState('')
-    // const [emailValue, setEmailValue] = useState('')
-    // const [passwordValue, setPasswordValue] = useState('')
-    // const [password2Value, setPassword2Value] = useState('')
 
     useEffect(() => {
         console.log(state.usernameValue)
@@ -146,7 +152,7 @@ function Register() {
         console.log('The form has been submitted')
         if (!state.usernameErrors.hasErrors && 
             !state.emailErrors.hasErrors && 
-            !state.password.hasErrors && 
+            !state.passwordErrors.hasErrors && 
             state.password2HelperText === ''
             ){
             dispatch({type: 'changeSendRequest'})
@@ -175,6 +181,12 @@ function Register() {
                 catch (error) {
                     console.log(error.response)
                     dispatch({type: 'enableButton'})
+                    if (error.response.data.username){
+                        dispatch({type: 'usernameExists'})
+                    }
+                    else if (error.response.data.email){
+                        dispatch({type: 'emailExists'})
+                    }
                 }
             }
             SignUp()
@@ -203,6 +215,18 @@ function Register() {
             <Grid item container justifyContent='center' sx={{ marginTop: '1rem' }}>
                 <Typography variant='h4'>Create An Account</Typography>
             </Grid>
+
+            {state.serverUserMessage ? (
+                <Alert severity="error">
+                    {state.serverUserMessage}
+                </Alert>
+            ) : ''}
+
+            {state.serverEmailMessage ? (
+                <Alert severity="error">
+                    {state.serverEmailMessage}
+                </Alert>
+            ) : ''}
             
             <Grid item container sx={{ marginTop: '1rem' }}>
                 <TextField 

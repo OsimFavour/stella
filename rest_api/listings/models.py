@@ -29,16 +29,14 @@ class Listing(models.Model):
         ('Sale', 'Sale'),
         ('Rent', 'Rent'),
     )
-    property_status = models.CharField(
-        max_length=20, blank=True, null=True, choices=choices_property_status)
+    property_status = models.CharField(max_length=20, blank=True, null=True, choices=choices_property_status)
     price = models.DecimalField(max_digits=50, decimal_places=0)
     choices_rental_frequency = (
         ('Month', 'Month'),
         ('Week', 'Week'),
         ('Day', 'Day')
     )
-    rental_frequency = models.CharField(
-        max_length=20, blank=True, null=True, choices=choices_rental_frequency)
+    rental_frequency = models.CharField(max_length=20, blank=True, null=True, choices=choices_rental_frequency)
     rooms = models.IntegerField(blank=True, null=True)
     furnished = models.BooleanField(default=False)
     pool = models.BooleanField(default=False)

@@ -1199,9 +1199,9 @@ function AddProperty() {
 							}}
 						>
 							{listingTypeOptions.map((option) => (
-									<option key={option.value} value={option.value}>
-										{option.label}
-									</option>
+								<option key={option.value} value={option.value}>
+									{option.label}
+								</option>
 							))}
 						</TextField>
 					</Grid>
@@ -1233,9 +1233,9 @@ function AddProperty() {
 							}}
 						>
 							{propertyStatusOptions.map((option) => (
-									<option key={option.value} value={option.value}>
-										{option.label}
-									</option>
+								<option key={option.value} value={option.value}>
+									{option.label}
+								</option>
 							))}
 						</TextField>
 					</Grid>
@@ -1308,8 +1308,8 @@ function AddProperty() {
 							dispatch({
 								type: 'catchDescriptionChange', 
 								descriptionChosen: e.target.value
-								})
-							}
+							})
+						}
 					/>
 				</Grid>
 

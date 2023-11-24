@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from listings.api.views import ListingList, ListingCreate, ListingDetail, ListingDelete, ListingUpdate
 from users.api.views import ProfileList, ProfileDetail, ProfileUpdate
-
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -30,6 +29,8 @@ urlpatterns = [
     path('api/listings/<int:pk>/', ListingDetail.as_view()),
     path('api/listings/<int:pk>/update/', ListingUpdate.as_view()),
     path('api/listings/<int:pk>/delete/', ListingDelete.as_view()),
+    # path('api/listings/search/', SearchListingView.as_view()),
+    # path('api/search/', SearchListingView.as_view()),
     path('api/profiles/', ProfileList.as_view()),
     path('api/profiles/<int:seller>/', ProfileDetail.as_view()),
     path('api/profiles/<int:seller>/update/', ProfileUpdate.as_view()),

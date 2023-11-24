@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 // MUI 
 import { Button, Typography, Grid, AppBar, Toolbar, IconButton } from '@mui/material'
@@ -10,6 +10,7 @@ import city from './Assets/city.jpg'
 
 
 function Home() {
+    const navigate = useNavigate()
     const [btnColor, setBtnColor] = useState('error')
     
     return (
@@ -28,7 +29,9 @@ function Home() {
                         backgroundColor: 'green', 
                         marginTop: '2rem', 
                         boxShadow: '3px 3px 3px white'
-                        }}>See all Properties</Button>
+                        }}
+                        onClick={() => navigate(`/search`)}
+                        >See all Properties</Button>
                 </div>
             </div>
         </>
